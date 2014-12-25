@@ -1,0 +1,9 @@
+RESULT = core_compiler
+SOURCES = \
+	./Utils/lists.ml ./Utils/lazy_lists.ml \
+	core_types.ml core.ml \
+	core_parser.mly core_lexer.mll \
+	core_printer.ml core_compiler.ml
+
+OCAMLMAKEFILE = OCamlMakefile
+include $(OCAMLMAKEFILE)
