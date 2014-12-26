@@ -1,2 +1,0 @@
-id x = x ;
-main = twice twice twice id 3

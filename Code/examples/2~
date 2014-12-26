@@ -1,5 +1,0 @@
-super x y = let t = 12 in ( Constructor{3,4} ) ;
-
-druga = \ m qw . case qw of 
-	<1> -> 3 ;
-	<5> -> m
