@@ -14,9 +14,9 @@ let main () =
 	let cin = open_in Sys.argv.(1)
 	in let lexbuf = Lexing.from_channel cin
 	in let program = Core_parser.program Core_lexer.token lexbuf
-	in let compiledToTi = Ti_compiler.compile program
-	in let tirun = Ti_evaluator.eval compiledToTi
-	in let res = Ti_printer.showResults tirun
+	in let compiledToGm = Gm_compiler.compile program
+	in let gmrun = Gm_evaluator.eval compiledToGm
+	in let res = Gm_printer.showResults gmrun
 	in print_string res
 	(*(Core_printer.pprint program)*);;
 

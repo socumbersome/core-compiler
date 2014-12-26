@@ -1,3 +1,14 @@
+type ('a, 'b) assoc = ('a * 'b) list;;
+
+let rec aLookup l k = match l with
+	| [] -> None
+	| ((k', v)::bs) -> if k = k' then Some v else aLookup bs k;;
+
+let aDomain alist = List.map fst alist;;
+let aRange alist = List.map snd alist;;
+
+let aEmpty = [];;
+
 let rmfst xs a =
 	let rec aux xs acc = match xs with
 		| [] -> List.rev acc
@@ -52,3 +63,5 @@ let rec last = function
 	| [] -> failwith "No last element exists in empty list"
 	| [x] -> x
 	| x::xs -> last xs;;
+
+let rec range a b = if a > b then [] else a::(range (a+1) b);;
