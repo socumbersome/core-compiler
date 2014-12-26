@@ -11,9 +11,10 @@ type instruction
 	| Pushint of int
 	| Push of int
 	| MkAppl
-(*	| Slide of int *)
+	| Slide of int
 	| Update of int
 	| Pop of int
+	| Alloc of int
 	;;
 
 type gmCode = instruction list;;

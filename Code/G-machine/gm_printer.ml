@@ -10,9 +10,11 @@ let showInstruction = function
 	| Push n -> iConcat [ iStr "Push "; iNum n ]
 	| Pushint n -> iConcat [ iStr "Pushint "; iNum n ]
 	| MkAppl -> iStr "MkAppl"
-(*	| Slide n -> iConcat [ iStr "Slide "; iNum n ];; *)
+	| Slide n -> iConcat [ iStr "Slide "; iNum n ]
 	| Update n -> iConcat [ iStr "Update "; iNum n ]
-	| Pop n -> iConcat [ iStr "Pop "; iNum n ];;
+	| Pop n -> iConcat [ iStr "Pop "; iNum n ]
+	| Alloc n -> iConcat [ iStr "Alloc "; iNum n ]
+	;;
 
 let showInstructions code =
 	iConcat [ iStr " Code:{";
