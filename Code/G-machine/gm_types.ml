@@ -11,7 +11,9 @@ type instruction
 	| Pushint of int
 	| Push of int
 	| MkAppl
-	| Slide of int
+(*	| Slide of int *)
+	| Update of int
+	| Pop of int
 	;;
 
 type gmCode = instruction list;;
@@ -23,6 +25,7 @@ type node
 		first address to the expression at the second address *)
 	| NGlobal of int * gmCode (* number of agruments and
 		a code sequence to be executed when arguments are given *)
+	| NInd of addr (* an indirection node *)
 	;;
 
 type gmHeap = node heap;;
@@ -52,6 +55,8 @@ let putHeap heap (code, stack, _, globals, stats) =
 	(code, stack, heap, globals, stats);;
 
 let getGlobals (_, _, _, globals, _) = globals;;
+let putGlobals globals (code, stack, heap, _, stats) =
+	(code, stack, heap, globals, stats);;
 
 let statInitial = 0;;
 let statIncSteps s = s + 1;;

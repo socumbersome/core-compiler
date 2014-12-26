@@ -11,8 +11,13 @@ let pushglobal f state =
 		("Undeclared global " ^ f));;
 
 let pushint n state =
-	let (heap', a) = hAlloc (getHeap state) (NNum n)
-	in putHeap heap' (putStack (a::getStack state) state);;
+	match (Lists.aLookup (getGlobals state) (string_of_int n)) with
+		| Some a -> putStack (a::getStack state) state
+		| None -> 
+			let (heap', a) = hAlloc (getHeap state) (NNum n)
+			in let state' = putGlobals 
+				((string_of_int n, a)::getGlobals state) state
+			in putHeap heap' (putStack (a::getStack state') state');;
 
 let mkAppl state =
 	let (a1::a2::ads') = getStack state
@@ -29,11 +34,22 @@ let push n state =
 	in let a = getArg (hLookup (getHeap state) (List.nth ads (n+1)))
 	in putStack (a::ads) state;;
 
+(** DEPRECATED *)
 let slide n state =
 	let (a::ads) = getStack state
-	in putStack(a::Lists.drop n ads) state;;
+	in putStack (a::Lists.drop n ads) state;;
 
-let unwind state =
+let update n state = 
+	let (a::ads) = getStack state
+	in let stack' = ads
+	in let an = List.nth ads n
+	in let heap' = hUpdate (getHeap state) an (NInd a)
+	in putHeap heap' (putStack stack' state);;
+
+let pop n state =
+	putStack (Lists.drop n (getStack state)) state;;
+
+let rec unwind state =
 	let heap = getHeap state
 	in let (a::ads) = getStack state
 	in let newState = function
@@ -44,6 +60,7 @@ let unwind state =
 			raise (GmEvaluationError
 				("Unwinding with too few arguments"))
 			else putCode code state
+		| NInd ia -> putCode [Unwind] (putStack (ia::ads) state)
 	in newState (hLookup heap a);;
 
 let dispatch i = match i with
@@ -51,7 +68,9 @@ let dispatch i = match i with
 	| Pushint n -> pushint n
 	| MkAppl -> mkAppl
 	| Push n -> push n
-	| Slide n -> slide n
+(*	| Slide n -> slide n *)
+	| Update n -> update n
+	| Pop n -> pop n
 	| Unwind -> unwind;;
 
 let step state =

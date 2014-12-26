@@ -27,7 +27,7 @@ let rec compileC expr env = match expr with
 
 let compileR e env =
 	let n = List.length env
-	in compileC e env @ [Slide (n + 1); Unwind];;
+	in compileC e env @ [(*Slide (n + 1)*)Update n; Pop n; Unwind];;
 
 let compileSc (name, env, body) =
 	let n = List.length env

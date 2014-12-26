@@ -10,7 +10,9 @@ let showInstruction = function
 	| Push n -> iConcat [ iStr "Push "; iNum n ]
 	| Pushint n -> iConcat [ iStr "Pushint "; iNum n ]
 	| MkAppl -> iStr "MkAppl"
-	| Slide n -> iConcat [ iStr "Slide "; iNum n ];;
+(*	| Slide n -> iConcat [ iStr "Slide "; iNum n ];; *)
+	| Update n -> iConcat [ iStr "Update "; iNum n ]
+	| Pop n -> iConcat [ iStr "Pop "; iNum n ];;
 
 let showInstructions code =
 	iConcat [ iStr " Code:{";
@@ -32,7 +34,8 @@ let showNode s a = function
 		)
 		in iConcat [ iStr "Global "; iStr v]
 	| NAppl(a1, a2) -> iConcat [ iStr "Appl "; iStr (showaddr a1);
-		iStr " "; iStr (showaddr a2) ];;
+		iStr " "; iStr (showaddr a2) ]
+	| NInd a -> iConcat [ iStr "Ind "; iStr (showaddr a) ];;
 
 let showStackItem s a =
 	iConcat [ iStr (showaddr a); iStr ": ";
