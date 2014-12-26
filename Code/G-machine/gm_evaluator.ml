@@ -62,7 +62,7 @@ let rec unwind state =
 			else putCode code state
 		| NInd ia -> putCode [Unwind] (putStack (ia::ads) state)
 	in newState (hLookup heap a);;
-
+(*)
 let dispatch i = match i with
 	| Pushglobal f -> pushglobal f
 	| Pushint n -> pushint n
