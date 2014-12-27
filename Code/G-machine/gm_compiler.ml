@@ -31,8 +31,17 @@ and compileLet comp defs expr env =
 	in compileLet' defs env @ comp expr env'
 		@ [ Slide (List.length defs) ]
 
+and compileLetrec' defs env updno = match defs with
+	| [] -> []
+	| ((name, expr)::defsr) ->
+		compileC expr env @ [Update updno] 
+		@ compileLetrec' defsr env (updno - 1)
+
 and compileLetrec comp defs expr env =
-	failwith "dasd"
+	let env' = compileArgs defs env
+	in let n = List.length defs
+	in [Alloc n] @ compileLetrec' defs env' (n - 1)
+	@ comp expr env' @ [Slide n]
 
 and compileC expr env = match expr with
 	| EVar v -> (match Lists.aLookup env v with
