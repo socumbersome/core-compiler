@@ -39,6 +39,7 @@ rule token = parse
 	| "case" { CASE }
 	| "in" { IN }
 	| "of" { OF }
+	| "if" { IF }
 	| "Constructor" { CONSTRUCTOR }
 	| "true" { TRUE }
 	| "false" { FALSE }
@@ -48,6 +49,7 @@ rule token = parse
 	| '|' { OR }
 	| '+' { PLUS }
 	| '-' { MINUS }
+	| "neg" { NEG }
 	| '*' { MULTIPLY }
 	| '/' { DIVIDE }
 	| '<' { LT }
@@ -64,6 +66,7 @@ rule token = parse
 	| '[' { LSQUARE_BRACKET }
 	| ']' { RSQUARE_BRACKET }
 	| '#' { HASH }
+	| '^' { CARET }
 	| '{' { LCURLY_BRACKET }
 	| '}' { RCURLY_BRACKET }
 	| _ as c {

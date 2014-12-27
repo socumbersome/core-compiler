@@ -9,9 +9,21 @@ type gmCompiledSC = (cName * int * gmCode);;
 type gmEnvironment = (cName, int) Lists.assoc;;
 type gmCompiler = coreExpr -> gmEnvironment -> gmCode;;
 
-let initialCode = [Pushglobal "main"; Unwind];;
-
-let compiledPrimitives = [];;
+let compiledPrimitives = [
+	("+", 2, [Push 1; Eval; Push 1; Eval; Add; Update 2; Pop 2; Unwind]);
+	("-", 2, [Push 1; Eval; Push 1; Eval; Sub; Update 2; Pop 2; Unwind]);
+	("*", 2, [Push 1; Eval; Push 1; Eval; Mul; Update 2; Pop 2; Unwind]);
+	("/", 2, [Push 1; Eval; Push 1; Eval; Div; Update 2; Pop 2; Unwind]);
+	("neg", 1, [Push 0; Eval; Neg; Update 1; Pop 1; Unwind]);
+	("==", 2, [Push 1; Eval; Push 1; Eval; Eq; Update 2; Pop 2; Unwind]);
+	("!=", 2, [Push 1; Eval; Push 1; Eval; Ne; Update 2; Pop 2; Unwind]);
+	("<", 2, [Push 1; Eval; Push 1; Eval; Lt; Update 2; Pop 2; Unwind]);
+	("<=", 2, [Push 1; Eval; Push 1; Eval; Le; Update 2; Pop 2; Unwind]);
+	(">", 2, [Push 1; Eval; Push 1; Eval; Gt; Update 2; Pop 2; Unwind]);
+	(">=", 2, [Push 1; Eval; Push 1; Eval; Ge; Update 2; Pop 2; Unwind]);
+	("if", 3, 
+		[Push 0; Eval; Cond([Push 1], [Push 2]); Update 3; Pop 3; Unwind])
+	];;
 
 let argOffset n env = List.map (fun (v, m) -> (v, m + n)) env;;
 
@@ -62,7 +74,7 @@ and compileC expr env = match expr with
 
 let compileR e env =
 	let n = List.length env
-	in compileC e env @ [(*Slide (n + 1)*)Update n; Pop n; Unwind];;
+	in compileC e env @ [Update n; Pop n; Unwind];;
 
 let compileSc (name, varsn, body) =
 	let n = List.length varsn
@@ -77,8 +89,11 @@ let allocateSc heap (name, nargs, instrs) =
 
 let buildInitialHeap program =
 	let compiled = List.map compileSc (program @ preludeDefs)
-	in Lists.mapAccuml allocateSc hInitial compiled;;
+	in Lists.mapAccuml allocateSc hInitial
+		(compiled @ compiledPrimitives);;
+
+let initialCode = [Pushglobal "main"; Eval];;
 
 let compile program =
 	let (heap, globals) = buildInitialHeap program
-	in (initialCode, [], heap, globals, statInitial);;
+	in (initialCode, [], [], heap, globals, statInitial);;

@@ -20,18 +20,18 @@
 
 %token SEMICOLON
 %token LET LETREC IN
-%token CASE OF ALT_ARROW
+%token CASE OF ALT_ARROW IF
 %token LAMBDA LAMBDA_DOT
 %token CONSTRUCTOR
 %token COMMA
-%token HASH
+%token HASH CARET
 %token ASSIGNMENT
 
 %token TRUE FALSE
 %token <int> NUMBER
 %token <string> VARIABLE
 %token OR AND LT GT LE GE EQ NE
-%token PLUS MINUS MULTIPLY DIVIDE UNARY_MINUS
+%token PLUS MINUS MULTIPLY DIVIDE UNARY_MINUS NEG
 
 %left OR
 %left AND
@@ -39,7 +39,7 @@
 %left EQ NE
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
-%left UNARY_MINUS
+%left UNARY_MINUS NEG
 
 %start program
 %type <Core_types.coreProgram> program
@@ -68,6 +68,9 @@ expr: expr aexpr { EAppl($1, $2) }
 	| expr GT expr { EAppl(EAppl(EVar ">", $1), $3) }
 	| TRUE { EVar "true" }
 	| FALSE { EVar "false" }
+	| NEG aexpr { EAppl(EVar "neg", $2) }
+	| IF expr aexpr aexpr { 
+		EAppl(EAppl(EAppl(EVar "if", $2), $3), $4) }
 /*	| MINUS expr %prec UNARY_MINUS { EAppl(EAppl(EVar "-", ENum 0), $2) } */
 	| LET defns IN expr { ELet(Core_types.nonRecursive, $2, $4) }
 	| LETREC defns IN expr { ELet(Core_types.recursive, $2, $4) }
@@ -78,7 +81,7 @@ expr: expr aexpr { EAppl($1, $2) }
 ;
 
 aexpr: VARIABLE { EVar($1) }
-	| MINUS NUMBER %prec UNARY_MINUS { ENum(- $2) }
+/*	| MINUS NUMBER %prec UNARY_MINUS { ENum(- $2) } */
 	| NUMBER { ENum($1) }
 	| CONSTRUCTOR LCURLY_BRACKET NUMBER COMMA NUMBER RCURLY_BRACKET 
 		{ EConstr($3, $5) }
@@ -96,7 +99,7 @@ alts: alt SEMICOLON alts { $1 :: $3 }
 	| alt { [$1] }
 ;
 
-alt: HASH NUMBER HASH varsz ALT_ARROW expr 
+alt: CARET NUMBER CARET varsz ALT_ARROW expr 
 	{ ($2, $4, $6) }
 ;
 

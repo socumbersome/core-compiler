@@ -4,7 +4,7 @@ open Core_printer;;
 open Heap;;
 open Miscellaneous;;
 
-let showInstruction = function
+let rec showInstruction = function
 	| Unwind -> iStr "Unwind"
 	| Pushglobal f -> iConcat [ iStr "Pushglobal "; iStr f ]
 	| Push n -> iConcat [ iStr "Push "; iNum n ]
@@ -14,13 +14,36 @@ let showInstruction = function
 	| Update n -> iConcat [ iStr "Update "; iNum n ]
 	| Pop n -> iConcat [ iStr "Pop "; iNum n ]
 	| Alloc n -> iConcat [ iStr "Alloc "; iNum n ]
-	;;
+	| Eval -> iStr "Eval"
+	| Add -> iStr "Add"
+	| Sub -> iStr "Sub"
+	| Mul -> iStr "Mul"
+	| Div -> iStr "Div"
+	| Neg -> iStr "Neg"
+	| Eq -> iStr "Eq"
+	| Ne -> iStr "Ne"
+	| Lt -> iStr "Lt"
+	| Le -> iStr "Le"
+	| Gt -> iStr "Gt"
+	| Ge -> iStr "Ge"
+	| Cond(code1, code2) -> iConcat [ iStr "(Cond"; iNewline;
+		iStr "1-> ";
+		shortShowInstructions 3 code1; iNewline; iStr "0-> ";
+		shortShowInstructions 3 code2; iStr ")" ]
 
-let showInstructions code =
+and showInstructions code =
 	iConcat [ iStr " Code:{";
 		iIndent (iInterleave iNewline
 			(List.map showInstruction code));
-		iStr "}"; iNewline ];;
+		iStr "}"; iNewline ]
+
+and shortShowInstructions number code =
+	let codes = List.map showInstruction (Lists.take number code)
+	in let dotcodes = if List.length code > number then
+		codes @ [ iStr "..." ]
+		else codes
+	in iConcat [ iStr "{"; iInterleave (iStr "; ") dotcodes; iStr "}"]
+	;;
 
 let showSC s (name, addr) =
 	let NGlobal(arity, code) = hLookup (getHeap s) addr
@@ -49,7 +72,22 @@ let showStack s =
 			(List.map (showStackItem s) (List.rev (getStack s))));
 		iStr "]" ];;
 
+let shortShowStack stack =
+	iConcat [ iStr "["; iInterleave (iStr ", ")
+		(List.map (iStr << showaddr) stack); iStr "]" ];;
+
+let showDumpItem (code, stack) =
+	iConcat [ iStr "<"; shortShowInstructions 3 code;
+		iStr ", "; shortShowStack stack; iStr ">" ];;
+
+let showDump s =
+	iConcat [iStr " Dump:["; iIndent (
+		iInterleave iNewline
+			(List.map showDumpItem (List.rev (getDump s))));
+		iStr "]" ];;
+
 let showState s = iConcat [ showStack s; iNewline;
+	showDump s; iNewline;
 	showInstructions (getCode s); iNewline ];;
 
 let showStats s = iConcat [ iStr "Steps taken = "; 

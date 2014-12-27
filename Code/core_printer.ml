@@ -23,15 +23,17 @@ let iAppend seq1 seq2 =
 (* need to take care of \n in str !? *)
 let iStr str = IStr str;;
 let iIndent seq = IIndent seq;;
-let iNewline = INewline (*iStr "\n"*);;
+let iNewline = INewline;;
 let iNum n = iStr (string_of_int n);;
+
 let iFWNum width n =
 	let digits = string_of_int n
-	in iStr ((*(String.make 
-		(width - String.length digits) ' '*)
+	in iStr (
 		(spaces (width - String.length digits)) ^ digits
 	);;
+
 let iConcat seqs = List.fold_left iAppend iNil seqs;;
+
 let iLayn seqs =
 	let lay_item (n, seq) =
 		iConcat [ iFWNum 4 n; iStr ") ";
@@ -43,23 +45,9 @@ let rec iInterleave seq seqs = match seqs with
 	| [s] -> s
 	| s1::s2::ss -> 
 		iConcat [ s1; seq; iInterleave seq (s2::ss) ]
-		(*iAppend
-			(iAppend (iAppend s1 seq) s2)
-			(iInterleave seq ss)*)
 	| [] -> iNil;;
 
-(*let printProgram program = "";;
 
-let rec printcExpr expr = match expr with
-    | ENum n -> string_of_int n
-    | EVar x -> x
-    | EAppl(e1, e2) -> printcExpr e1 ^ " " ^ printcExpr e2
-    | _ -> "how?:(";;
-
-let printcExprWithParenths expr =
-    if isAtomicExpr expr then printcExpr expr
-    else "(" ^ printcExpr expr ^ ")";;
-*)
 (** generates e1 e2 e2 ... e2 (e2 appears exactly n times) *)
 let mkMultiAppl n e1 e2 = 
 	List.fold_left (fun x y -> EAppl(x, y)) e1 (Lists.buildn n e2);;
@@ -82,8 +70,8 @@ let rec flattenseq col seqs = match seqs with
 			*)
 		| (IIndent seq, _) -> 
 			flattenseq col ((seq, col)::xs) 
-		| (INewline, indent) -> "\n" ^ spaces indent(*(String.make indent ' ')*) ^
-			(flattenseq indent xs)
+		| (INewline, indent) -> "\n" ^ spaces indent
+		^ (flattenseq indent xs)
 	);;
 
 let iDisplay seq = flattenseq 0 [(seq, 0)];;
