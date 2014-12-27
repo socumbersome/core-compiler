@@ -1,26 +1,12 @@
 Supercombinator definitions
 Code for fac
- Code:{Pushint 1
+ Code:{Pushint 0
        Push 1
-       Pushglobal -
-       MkAppl
-       MkAppl
-       Pushglobal fac
-       MkAppl
-       Push 1
-       Pushglobal *
-       MkAppl
-       MkAppl
-       Pushint 1
-       Pushint 0
-       Push 3
-       Pushglobal ==
-       MkAppl
-       MkAppl
-       Pushglobal if
-       MkAppl
-       MkAppl
-       MkAppl
+       Eval
+       Eq
+       (Cond
+       1-> {Pushint 1}
+       0-> {Pushint 1; Push 1; Pushglobal -; ...})
        Update 1
        Pop 1
        Unwind}
@@ -31,6 +17,7 @@ Code for main
  Code:{Pushint 3
        Pushglobal fac
        MkAppl
+       Eval
        Update 0
        Pop 0
        Unwind}
@@ -39,6 +26,7 @@ Code for main
 
 Code for I
  Code:{Push 0
+       Eval
        Update 1
        Pop 1
        Unwind}
@@ -47,6 +35,7 @@ Code for I
 
 Code for K
  Code:{Push 0
+       Eval
        Update 2
        Pop 2
        Unwind}
@@ -55,6 +44,7 @@ Code for K
 
 Code for K1
  Code:{Push 1
+       Eval
        Update 2
        Pop 2
        Unwind}
@@ -69,6 +59,7 @@ Code for S
        Push 2
        MkAppl
        MkAppl
+       Eval
        Update 3
        Pop 3
        Unwind}
@@ -81,6 +72,7 @@ Code for compose
        MkAppl
        Push 1
        MkAppl
+       Eval
        Update 3
        Pop 3
        Unwind}
@@ -93,6 +85,7 @@ Code for twice
        Pushglobal compose
        MkAppl
        MkAppl
+       Eval
        Update 1
        Pop 1
        Unwind}
@@ -265,6 +258,7 @@ State transitions
        Code:{Pushint 3
              Pushglobal fac
              MkAppl
+             Eval
              Update 0
              Pop 0
              Unwind}
@@ -275,6 +269,7 @@ State transitions
        Dump:[<{}, []>]
        Code:{Pushglobal fac
              MkAppl
+             Eval
              Update 0
              Pop 0
              Unwind}
@@ -285,6 +280,7 @@ State transitions
               #1: Global fac]
        Dump:[<{}, []>]
        Code:{MkAppl
+             Eval
              Update 0
              Pop 0
              Unwind}
@@ -293,115 +289,92 @@ State transitions
    7)  Stack:[#2: Global main
               #22: Appl #1 #21]
        Dump:[<{}, []>]
-       Code:{Update 0
+       Code:{Eval
+             Update 0
              Pop 0
              Unwind}
       
       
-   8)  Stack:[#2: Ind #22]
-       Dump:[<{}, []>]
-       Code:{Pop 0
+   8)  Stack:[#22: Appl #1 #21]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Unwind}
+      
+      
+   9)  Stack:[#22: Appl #1 #21
+              #1: Global fac]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Unwind}
+      
+      
+  10)  Stack:[#22: Appl #1 #21
+              #21: 3]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Pushint 0
+             Push 1
+             Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
-      
-      
-   9)  Stack:[#2: Ind #22]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  10)  Stack:[#22: Appl #1 #21]
-       Dump:[<{}, []>]
-       Code:{Unwind}
       
       
   11)  Stack:[#22: Appl #1 #21
-              #1: Global fac]
-       Dump:[<{}, []>]
-       Code:{Unwind}
+              #21: 3
+              #23: 0]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Push 1
+             Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
       
       
   12)  Stack:[#22: Appl #1 #21
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Pushint 1
-             Push 1
-             Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  13)  Stack:[#22: Appl #1 #21
               #21: 3
-              #23: 1]
-       Dump:[<{}, []>]
-       Code:{Push 1
-             Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+              #23: 0
+              #21: 3]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
              Update 1
              Pop 1
              Unwind}
+      
+      
+  13)  Stack:[#21: 3]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #21, #22]>]
+       Code:{Unwind}
       
       
   14)  Stack:[#22: Appl #1 #21
               #21: 3
-              #23: 1
+              #23: 0
               #21: 3]
-       Dump:[<{}, []>]
-       Code:{Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
              Update 1
              Pop 1
              Unwind}
@@ -409,55 +382,32 @@ State transitions
       
   15)  Stack:[#22: Appl #1 #21
               #21: 3
-              #23: 1
-              #21: 3
-              #10: Global -]
-       Dump:[<{}, []>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+              #24: 0]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{(Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
              Update 1
              Pop 1
              Unwind}
       
       
   16)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #23: 1
-              #24: Appl #10 #21]
-       Dump:[<{}, []>]
-       Code:{MkAppl
+              #21: 3]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Pushint 1
+             Push 1
+             Pushglobal -
+             MkAppl
+             MkAppl
              Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -465,24 +415,19 @@ State transitions
       
   17)  Stack:[#22: Appl #1 #21
               #21: 3
-              #25: Appl #24 #23]
-       Dump:[<{}, []>]
-       Code:{Pushglobal fac
+              #25: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Push 1
+             Pushglobal -
              MkAppl
+             MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -490,24 +435,19 @@ State transitions
       
   18)  Stack:[#22: Appl #1 #21
               #21: 3
-              #25: Appl #24 #23
-              #1: Global fac]
-       Dump:[<{}, []>]
-       Code:{MkAppl
+              #25: 1
+              #21: 3]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Pushglobal -
+             MkAppl
+             MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -515,22 +455,19 @@ State transitions
       
   19)  Stack:[#22: Appl #1 #21
               #21: 3
-              #26: Appl #1 #25]
-       Dump:[<{}, []>]
-       Code:{Push 1
-             Pushglobal *
+              #25: 1
+              #21: 3
+              #10: Global -]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{MkAppl
              MkAppl
+             Pushglobal fac
              MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -538,22 +475,17 @@ State transitions
       
   20)  Stack:[#22: Appl #1 #21
               #21: 3
-              #26: Appl #1 #25
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Pushglobal *
+              #25: 1
+              #26: Appl #10 #21]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{MkAppl
+             Pushglobal fac
              MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -561,22 +493,15 @@ State transitions
       
   21)  Stack:[#22: Appl #1 #21
               #21: 3
-              #26: Appl #1 #25
-              #21: 3
-              #11: Global *]
-       Dump:[<{}, []>]
-       Code:{MkAppl
+              #27: Appl #26 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Pushglobal fac
              MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -584,20 +509,15 @@ State transitions
       
   22)  Stack:[#22: Appl #1 #21
               #21: 3
-              #26: Appl #1 #25
-              #27: Appl #11 #21]
-       Dump:[<{}, []>]
+              #27: Appl #26 #25
+              #1: Global fac]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
        Code:{MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
@@ -605,526 +525,789 @@ State transitions
       
   23)  Stack:[#22: Appl #1 #21
               #21: 3
-              #28: Appl #27 #26]
-       Dump:[<{}, []>]
-       Code:{Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+              #28: Appl #1 #27]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Eval
+             Push 1
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  24)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1]
-       Dump:[<{}, []>]
+  24)  Stack:[#28: Appl #1 #27]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Unwind}
+      
+      
+  25)  Stack:[#28: Appl #1 #27
+              #1: Global fac]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Unwind}
+      
+      
+  26)  Stack:[#28: Appl #1 #27
+              #27: Appl #26 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  25)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #29: 0]
-       Dump:[<{}, []>]
-       Code:{Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  26)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #29: 0
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  27)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #29: 0
-              #21: 3
-              #14: Global ==]
-       Dump:[<{}, []>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  28)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #29: 0
-              #30: Appl #14 #21]
-       Dump:[<{}, []>]
-       Code:{MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  29)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #31: Appl #30 #29]
-       Dump:[<{}, []>]
-       Code:{Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  30)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #31: Appl #30 #29
-              #20: Global if]
-       Dump:[<{}, []>]
-       Code:{MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  31)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #23: 1
-              #32: Appl #20 #31]
-       Dump:[<{}, []>]
-       Code:{MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  32)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #28: Appl #27 #26
-              #33: Appl #32 #23]
-       Dump:[<{}, []>]
-       Code:{MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  33)  Stack:[#22: Appl #1 #21
-              #21: 3
-              #34: Appl #33 #28]
-       Dump:[<{}, []>]
-       Code:{Update 1
-             Pop 1
-             Unwind}
-      
-      
-  34)  Stack:[#22: Ind #34
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Pop 1
-             Unwind}
-      
-      
-  35)  Stack:[#22: Ind #34]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  36)  Stack:[#34: Appl #33 #28]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  37)  Stack:[#34: Appl #33 #28
-              #33: Appl #32 #23]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  38)  Stack:[#34: Appl #33 #28
-              #33: Appl #32 #23
-              #32: Appl #20 #31]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  39)  Stack:[#34: Appl #33 #28
-              #33: Appl #32 #23
-              #32: Appl #20 #31
-              #20: Global if]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  40)  Stack:[#34: Appl #33 #28
-              #28: Appl #27 #26
-              #23: 1
-              #31: Appl #30 #29]
-       Dump:[<{}, []>]
-       Code:{Push 0
+             Push 1
              Eval
+             Eq
              (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
-  41)  Stack:[#34: Appl #33 #28
-              #28: Appl #27 #26
-              #23: 1
-              #31: Appl #30 #29
-              #31: Appl #30 #29]
-       Dump:[<{}, []>]
+  27)  Stack:[#28: Appl #1 #27
+              #27: Appl #26 #25
+              #23: 0]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Push 1
+             Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  28)  Stack:[#28: Appl #1 #27
+              #27: Appl #26 #25
+              #23: 0
+              #27: Appl #26 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Eval
+             Eq
              (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
-  42)  Stack:[#31: Appl #30 #29]
+  29)  Stack:[#27: Appl #26 #25]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Unwind}
       
       
-  43)  Stack:[#31: Appl #30 #29
-              #30: Appl #14 #21]
+  30)  Stack:[#27: Appl #26 #25
+              #26: Appl #10 #21]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Unwind}
       
       
-  44)  Stack:[#31: Appl #30 #29
-              #30: Appl #14 #21
-              #14: Global ==]
+  31)  Stack:[#27: Appl #26 #25
+              #26: Appl #10 #21
+              #10: Global -]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Unwind}
       
       
-  45)  Stack:[#31: Appl #30 #29
-              #29: 0
+  32)  Stack:[#27: Appl #26 #25
+              #25: 1
               #21: 3]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Push 1
              Eval
              Push 1
              Eval
-             Eq
+             Sub
              Update 2
              Pop 2
              Unwind}
       
       
-  46)  Stack:[#31: Appl #30 #29
-              #29: 0
+  33)  Stack:[#27: Appl #26 #25
+              #25: 1
               #21: 3
-              #29: 0]
+              #25: 1]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Eval
              Push 1
              Eval
-             Eq
+             Sub
              Update 2
              Pop 2
              Unwind}
       
       
-  47)  Stack:[#29: 0]
+  34)  Stack:[#25: 1]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>
-             <{Push 1; Eval; Eq; ...}, [#21, #29, #31]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>
+             <{Push 1; Eval; Sub; ...}, [#21, #25, #27]>]
        Code:{Unwind}
       
       
-  48)  Stack:[#31: Appl #30 #29
-              #29: 0
+  35)  Stack:[#27: Appl #26 #25
+              #25: 1
               #21: 3
-              #29: 0]
+              #25: 1]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Push 1
              Eval
-             Eq
+             Sub
              Update 2
              Pop 2
              Unwind}
       
       
-  49)  Stack:[#31: Appl #30 #29
-              #29: 0
+  36)  Stack:[#27: Appl #26 #25
+              #25: 1
               #21: 3
-              #29: 0
+              #25: 1
               #21: 3]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
        Code:{Eval
-             Eq
+             Sub
              Update 2
              Pop 2
              Unwind}
       
       
-  50)  Stack:[#21: 3]
+  37)  Stack:[#21: 3]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #21, #29, #31]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>
+             <{Sub; Update 2; Pop 2; ...}, [#25, #21, #25, #27]>]
        Code:{Unwind}
       
       
-  51)  Stack:[#31: Appl #30 #29
-              #29: 0
+  38)  Stack:[#27: Appl #26 #25
+              #25: 1
               #21: 3
-              #29: 0
+              #25: 1
               #21: 3]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
+       Code:{Sub
+             Update 2
+             Pop 2
+             Unwind}
+      
+      
+  39)  Stack:[#27: Appl #26 #25
+              #25: 1
+              #21: 3
+              #29: 2]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
+       Code:{Update 2
+             Pop 2
+             Unwind}
+      
+      
+  40)  Stack:[#27: Ind #29
+              #25: 1
+              #21: 3]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
+       Code:{Pop 2
+             Unwind}
+      
+      
+  41)  Stack:[#27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
+       Code:{Unwind}
+      
+      
+  42)  Stack:[#29: 2]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #27, #28]>]
+       Code:{Unwind}
+      
+      
+  43)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #23: 0
+              #29: 2]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  44)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #30: 0]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{(Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  45)  Stack:[#28: Appl #1 #27
+              #27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Pushint 1
+             Push 1
+             Pushglobal -
+             MkAppl
+             MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  46)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #25: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Push 1
+             Pushglobal -
+             MkAppl
+             MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  47)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #25: 1
+              #27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Pushglobal -
+             MkAppl
+             MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  48)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #25: 1
+              #27: Ind #29
+              #10: Global -]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{MkAppl
+             MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  49)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #25: 1
+              #31: Appl #10 #27]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{MkAppl
+             Pushglobal fac
+             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  50)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #32: Appl #31 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Pushglobal fac
+             MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  51)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #32: Appl #31 #25
+              #1: Global fac]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{MkAppl
+             Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  52)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #33: Appl #1 #32]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Eval
+             Push 1
+             Eval
+             Mul
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  53)  Stack:[#33: Appl #1 #32]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Unwind}
+      
+      
+  54)  Stack:[#33: Appl #1 #32
+              #1: Global fac]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Unwind}
+      
+      
+  55)  Stack:[#33: Appl #1 #32
+              #32: Appl #31 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Pushint 0
+             Push 1
+             Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  56)  Stack:[#33: Appl #1 #32
+              #32: Appl #31 #25
+              #23: 0]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Push 1
+             Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  57)  Stack:[#33: Appl #1 #32
+              #32: Appl #31 #25
+              #23: 0
+              #32: Appl #31 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Eval
+             Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  58)  Stack:[#32: Appl #31 #25]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Unwind}
+      
+      
+  59)  Stack:[#32: Appl #31 #25
+              #31: Appl #10 #27]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Unwind}
+      
+      
+  60)  Stack:[#32: Appl #31 #25
+              #31: Appl #10 #27
+              #10: Global -]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Unwind}
+      
+      
+  61)  Stack:[#32: Appl #31 #25
+              #25: 1
+              #27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Push 1
+             Eval
+             Push 1
+             Eval
+             Sub
              Update 2
              Pop 2
              Unwind}
       
       
-  52)  Stack:[#31: Appl #30 #29
-              #29: 0
-              #21: 3
+  62)  Stack:[#32: Appl #31 #25
+              #25: 1
+              #27: Ind #29
+              #25: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Eval
+             Push 1
+             Eval
+             Sub
+             Update 2
+             Pop 2
+             Unwind}
+      
+      
+  63)  Stack:[#25: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>
+             <{Push 1; Eval; Sub; ...}, [#27, #25, #32]>]
+       Code:{Unwind}
+      
+      
+  64)  Stack:[#32: Appl #31 #25
+              #25: 1
+              #27: Ind #29
+              #25: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Push 1
+             Eval
+             Sub
+             Update 2
+             Pop 2
+             Unwind}
+      
+      
+  65)  Stack:[#32: Appl #31 #25
+              #25: 1
+              #27: Ind #29
+              #25: 1
+              #27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Eval
+             Sub
+             Update 2
+             Pop 2
+             Unwind}
+      
+      
+  66)  Stack:[#27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>
+             <{Sub; Update 2; Pop 2; ...}, [#25, #27, #25, #32]>]
+       Code:{Unwind}
+      
+      
+  67)  Stack:[#29: 2]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>
+             <{Sub; Update 2; Pop 2; ...}, [#25, #27, #25, #32]>]
+       Code:{Unwind}
+      
+      
+  68)  Stack:[#32: Appl #31 #25
+              #25: 1
+              #27: Ind #29
+              #25: 1
+              #29: 2]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Sub
+             Update 2
+             Pop 2
+             Unwind}
+      
+      
+  69)  Stack:[#32: Appl #31 #25
+              #25: 1
+              #27: Ind #29
+              #34: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Update 2
+             Pop 2
+             Unwind}
+      
+      
+  70)  Stack:[#32: Ind #34
+              #25: 1
+              #27: Ind #29]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Pop 2
+             Unwind}
+      
+      
+  71)  Stack:[#32: Ind #34]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Unwind}
+      
+      
+  72)  Stack:[#34: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #32, #33]>]
+       Code:{Unwind}
+      
+      
+  73)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #23: 0
+              #34: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Eq
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
+             Unwind}
+      
+      
+  74)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
               #35: 0]
        Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
-  53)  Stack:[#31: Ind #35
-              #29: 0
-              #21: 3]
-       Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
-  54)  Stack:[#31: Ind #35]
-       Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
-       Code:{Unwind}
-      
-      
-  55)  Stack:[#35: 0]
-       Dump:[<{}, []>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#31, #23, #28, #34]>]
-       Code:{Unwind}
-      
-      
-  56)  Stack:[#34: Appl #33 #28
-              #28: Appl #27 #26
-              #23: 1
-              #31: Ind #35
-              #35: 0]
-       Dump:[<{}, []>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{(Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
-  57)  Stack:[#34: Appl #33 #28
-              #28: Appl #27 #26
-              #23: 1
-              #31: Ind #35]
-       Dump:[<{}, []>]
-       Code:{Push 2
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
-  58)  Stack:[#34: Appl #33 #28
-              #28: Appl #27 #26
-              #23: 1
-              #31: Ind #35
-              #28: Appl #27 #26]
-       Dump:[<{}, []>]
-       Code:{Update 3
-             Pop 3
-             Unwind}
-      
-      
-  59)  Stack:[#34: Ind #28
-              #28: Appl #27 #26
-              #23: 1
-              #31: Ind #35]
-       Dump:[<{}, []>]
-       Code:{Pop 3
-             Unwind}
-      
-      
-  60)  Stack:[#34: Ind #28]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  61)  Stack:[#28: Appl #27 #26]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  62)  Stack:[#28: Appl #27 #26
-              #27: Appl #11 #21]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  63)  Stack:[#28: Appl #27 #26
-              #27: Appl #11 #21
-              #11: Global *]
-       Dump:[<{}, []>]
-       Code:{Unwind}
-      
-      
-  64)  Stack:[#28: Appl #27 #26
-              #26: Appl #1 #25
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Push 1
-             Eval
-             Push 1
-             Eval
-             Mul
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
-  65)  Stack:[#28: Appl #27 #26
-              #26: Appl #1 #25
-              #21: 3
-              #26: Appl #1 #25]
-       Dump:[<{}, []>]
-       Code:{Eval
-             Push 1
-             Eval
-             Mul
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
-  66)  Stack:[#26: Appl #1 #25]
+  75)  Stack:[#33: Appl #1 #32
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  67)  Stack:[#26: Appl #1 #25
-              #1: Global fac]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  68)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Pushint 1
              Push 1
              Pushglobal -
@@ -1132,703 +1315,279 @@ State transitions
              MkAppl
              Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  69)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #23: 1]
+  76)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Push 1
              Pushglobal -
              MkAppl
              MkAppl
              Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  70)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #23: 1
-              #25: Appl #24 #23]
+  77)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Pushglobal -
              MkAppl
              MkAppl
              Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  71)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #23: 1
-              #25: Appl #24 #23
+  78)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1
+              #32: Ind #34
               #10: Global -]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{MkAppl
              MkAppl
              Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  72)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #23: 1
-              #36: Appl #10 #25]
+  79)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1
+              #36: Appl #10 #32]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{MkAppl
              Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  73)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #37: Appl #36 #23]
+  80)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #37: Appl #36 #25]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Pushglobal fac
              MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  74)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #37: Appl #36 #23
+  81)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #37: Appl #36 #25
               #1: Global fac]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{MkAppl
+             Eval
              Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  75)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
+  82)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
               #38: Appl #1 #37]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Eval
+             Push 1
+             Eval
+             Mul
              Update 1
              Pop 1
              Unwind}
       
       
-  76)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #38: Appl #1 #37
-              #25: Appl #24 #23]
+  83)  Stack:[#38: Appl #1 #37]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
+       Code:{Unwind}
       
       
-  77)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #38: Appl #1 #37
-              #25: Appl #24 #23
-              #11: Global *]
+  84)  Stack:[#38: Appl #1 #37
+              #1: Global fac]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
+       Code:{Unwind}
       
       
-  78)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #38: Appl #1 #37
-              #39: Appl #11 #25]
+  85)  Stack:[#38: Appl #1 #37
+              #37: Appl #36 #25]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  79)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  80)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  81)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  82)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #29: 0
-              #25: Appl #24 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  83)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #29: 0
-              #25: Appl #24 #23
-              #14: Global ==]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  84)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #29: 0
-              #41: Appl #14 #25]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  85)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #42: Appl #41 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  86)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #42: Appl #41 #29
-              #20: Global if]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  87)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #23: 1
-              #43: Appl #20 #42]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  88)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #40: Appl #39 #38
-              #44: Appl #43 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
-  89)  Stack:[#26: Appl #1 #25
-              #25: Appl #24 #23
-              #45: Appl #44 #40]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Update 1
-             Pop 1
-             Unwind}
-      
-      
-  90)  Stack:[#26: Ind #45
-              #25: Appl #24 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pop 1
-             Unwind}
-      
-      
-  91)  Stack:[#26: Ind #45]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  92)  Stack:[#45: Appl #44 #40]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  93)  Stack:[#45: Appl #44 #40
-              #44: Appl #43 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  94)  Stack:[#45: Appl #44 #40
-              #44: Appl #43 #23
-              #43: Appl #20 #42]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  95)  Stack:[#45: Appl #44 #40
-              #44: Appl #43 #23
-              #43: Appl #20 #42
-              #20: Global if]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
-  96)  Stack:[#45: Appl #44 #40
-              #40: Appl #39 #38
-              #23: 1
-              #42: Appl #41 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Push 0
-             Eval
-             (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
-  97)  Stack:[#45: Appl #44 #40
-              #40: Appl #39 #38
-              #23: 1
-              #42: Appl #41 #29
-              #42: Appl #41 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Eval
-             (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
-  98)  Stack:[#42: Appl #41 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Unwind}
-      
-      
-  99)  Stack:[#42: Appl #41 #29
-              #41: Appl #14 #25]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Unwind}
-      
-      
- 100)  Stack:[#42: Appl #41 #29
-              #41: Appl #14 #25
-              #14: Global ==]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Unwind}
-      
-      
- 101)  Stack:[#42: Appl #41 #29
-              #29: 0
-              #25: Appl #24 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Push 1
-             Eval
              Push 1
              Eval
              Eq
-             Update 2
-             Pop 2
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
- 102)  Stack:[#42: Appl #41 #29
-              #29: 0
-              #25: Appl #24 #23
-              #29: 0]
+  86)  Stack:[#38: Appl #1 #37
+              #37: Appl #36 #25
+              #23: 0]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Eval
-             Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 103)  Stack:[#29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Push 1; Eval; Eq; ...}, [#25, #29, #42]>]
-       Code:{Unwind}
-      
-      
- 104)  Stack:[#42: Appl #41 #29
-              #29: 0
-              #25: Appl #24 #23
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Push 1
              Eval
              Eq
-             Update 2
-             Pop 2
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
- 105)  Stack:[#42: Appl #41 #29
-              #29: 0
-              #25: Appl #24 #23
-              #29: 0
-              #25: Appl #24 #23]
+  87)  Stack:[#38: Appl #1 #37
+              #37: Appl #36 #25
+              #23: 0
+              #37: Appl #36 #25]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Eval
              Eq
-             Update 2
-             Pop 2
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
- 106)  Stack:[#25: Appl #24 #23]
+  88)  Stack:[#37: Appl #36 #25]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Unwind}
       
       
- 107)  Stack:[#25: Appl #24 #23
-              #24: Appl #10 #21]
+  89)  Stack:[#37: Appl #36 #25
+              #36: Appl #10 #32]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Unwind}
       
       
- 108)  Stack:[#25: Appl #24 #23
-              #24: Appl #10 #21
+  90)  Stack:[#37: Appl #36 #25
+              #36: Appl #10 #32
               #10: Global -]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Unwind}
       
       
- 109)  Stack:[#25: Appl #24 #23
-              #23: 1
-              #21: 3]
+  91)  Stack:[#37: Appl #36 #25
+              #25: 1
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Push 1
              Eval
              Push 1
@@ -1839,16 +1598,18 @@ State transitions
              Unwind}
       
       
- 110)  Stack:[#25: Appl #24 #23
-              #23: 1
-              #21: 3
-              #23: 1]
+  92)  Stack:[#37: Appl #36 #25
+              #25: 1
+              #32: Ind #34
+              #25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Eval
              Push 1
              Eval
@@ -1858,27 +1619,31 @@ State transitions
              Unwind}
       
       
- 111)  Stack:[#23: 1]
+  93)  Stack:[#25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>
-             <{Push 1; Eval; Sub; ...}, [#21, #23, #25]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>
+             <{Push 1; Eval; Sub; ...}, [#32, #25, #37]>]
        Code:{Unwind}
       
       
- 112)  Stack:[#25: Appl #24 #23
-              #23: 1
-              #21: 3
-              #23: 1]
+  94)  Stack:[#37: Appl #36 #25
+              #25: 1
+              #32: Ind #34
+              #25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Push 1
              Eval
              Sub
@@ -1887,17 +1652,19 @@ State transitions
              Unwind}
       
       
- 113)  Stack:[#25: Appl #24 #23
-              #23: 1
-              #21: 3
-              #23: 1
-              #21: 3]
+  95)  Stack:[#37: Appl #36 #25
+              #25: 1
+              #32: Ind #34
+              #25: 1
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Eval
              Sub
              Update 2
@@ -1905,2765 +1672,491 @@ State transitions
              Unwind}
       
       
- 114)  Stack:[#21: 3]
+  96)  Stack:[#32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>
-             <{Sub; Update 2; Pop 2; ...}, [#23, #21, #23, #25]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>
+             <{Sub; Update 2; Pop 2; ...}, [#25, #32, #25, #37]>]
        Code:{Unwind}
       
       
- 115)  Stack:[#25: Appl #24 #23
-              #23: 1
-              #21: 3
-              #23: 1
-              #21: 3]
+  97)  Stack:[#34: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>
+             <{Sub; Update 2; Pop 2; ...}, [#25, #32, #25, #37]>]
+       Code:{Unwind}
+      
+      
+  98)  Stack:[#37: Appl #36 #25
+              #25: 1
+              #32: Ind #34
+              #25: 1
+              #34: 1]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Sub
              Update 2
              Pop 2
              Unwind}
       
       
- 116)  Stack:[#25: Appl #24 #23
-              #23: 1
-              #21: 3
-              #46: 2]
+  99)  Stack:[#37: Appl #36 #25
+              #25: 1
+              #32: Ind #34
+              #39: 0]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Update 2
              Pop 2
              Unwind}
       
       
- 117)  Stack:[#25: Ind #46
-              #23: 1
-              #21: 3]
+ 100)  Stack:[#37: Ind #39
+              #25: 1
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Pop 2
              Unwind}
       
       
- 118)  Stack:[#25: Ind #46]
+ 101)  Stack:[#37: Ind #39]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Unwind}
       
       
- 119)  Stack:[#46: 2]
+ 102)  Stack:[#39: 0]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #25, #29, #42]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>
+             <{Eq; (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...}); Update 1; ...}, [#23, #37, #38]>]
        Code:{Unwind}
       
       
- 120)  Stack:[#42: Appl #41 #29
-              #29: 0
-              #25: Ind #46
-              #29: 0
-              #46: 2]
+ 103)  Stack:[#38: Appl #1 #37
+              #37: Ind #39
+              #23: 0
+              #39: 0]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Eq
-             Update 2
-             Pop 2
+             (Cond
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
- 121)  Stack:[#42: Appl #41 #29
-              #29: 0
-              #25: Ind #46
-              #47: 0]
+ 104)  Stack:[#38: Appl #1 #37
+              #37: Ind #39
+              #40: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 122)  Stack:[#42: Ind #47
-              #29: 0
-              #25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 123)  Stack:[#42: Ind #47]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Unwind}
-      
-      
- 124)  Stack:[#47: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#42, #23, #40, #45]>]
-       Code:{Unwind}
-      
-      
- 125)  Stack:[#45: Appl #44 #40
-              #40: Appl #39 #38
-              #23: 1
-              #42: Ind #47
-              #47: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{(Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
+             1-> {Pushint 1}
+             0-> {Pushint 1; Push 1; Pushglobal -; ...})
+             Update 1
+             Pop 1
              Unwind}
       
       
- 126)  Stack:[#45: Appl #44 #40
-              #40: Appl #39 #38
-              #23: 1
-              #42: Ind #47]
+ 105)  Stack:[#38: Appl #1 #37
+              #37: Ind #39]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Push 2
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 127)  Stack:[#45: Appl #44 #40
-              #40: Appl #39 #38
-              #23: 1
-              #42: Ind #47
-              #40: Appl #39 #38]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Update 3
-             Pop 3
-             Unwind}
-      
-      
- 128)  Stack:[#45: Ind #40
-              #40: Appl #39 #38
-              #23: 1
-              #42: Ind #47]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pop 3
-             Unwind}
-      
-      
- 129)  Stack:[#45: Ind #40]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
- 130)  Stack:[#40: Appl #39 #38]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
- 131)  Stack:[#40: Appl #39 #38
-              #39: Appl #11 #25]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
- 132)  Stack:[#40: Appl #39 #38
-              #39: Appl #11 #25
-              #11: Global *]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
- 133)  Stack:[#40: Appl #39 #38
-              #38: Appl #1 #37
-              #25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Push 1
-             Eval
-             Push 1
-             Eval
-             Mul
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 134)  Stack:[#40: Appl #39 #38
-              #38: Appl #1 #37
-              #25: Ind #46
-              #38: Appl #1 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Eval
-             Push 1
-             Eval
-             Mul
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 135)  Stack:[#38: Appl #1 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 136)  Stack:[#38: Appl #1 #37
-              #1: Global fac]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 137)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Pushint 1
-             Push 1
-             Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
              Update 1
              Pop 1
              Unwind}
       
       
- 138)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #23: 1]
+ 106)  Stack:[#38: Appl #1 #37
+              #37: Ind #39
+              #25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Push 1
-             Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 139)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #23: 1
-              #37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 140)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #23: 1
-              #37: Appl #36 #23
-              #10: Global -]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 141)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #23: 1
-              #48: Appl #10 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 142)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 143)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #49: Appl #48 #23
-              #1: Global fac]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 144)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #50: Appl #1 #49]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 145)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #50: Appl #1 #49
-              #37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 146)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #50: Appl #1 #49
-              #37: Appl #36 #23
-              #11: Global *]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 147)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #50: Appl #1 #49
-              #51: Appl #11 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 148)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 149)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 150)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 151)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #29: 0
-              #37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 152)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #29: 0
-              #37: Appl #36 #23
-              #14: Global ==]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 153)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #29: 0
-              #53: Appl #14 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 154)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #54: Appl #53 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 155)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #54: Appl #53 #29
-              #20: Global if]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 156)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #23: 1
-              #55: Appl #20 #54]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 157)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #52: Appl #51 #50
-              #56: Appl #55 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 158)  Stack:[#38: Appl #1 #37
-              #37: Appl #36 #23
-              #57: Appl #56 #52]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Update 1
              Pop 1
              Unwind}
       
       
- 159)  Stack:[#38: Ind #57
-              #37: Appl #36 #23]
+ 107)  Stack:[#38: Ind #25
+              #37: Ind #39]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Pop 1
              Unwind}
       
       
- 160)  Stack:[#38: Ind #57]
+ 108)  Stack:[#38: Ind #25]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Unwind}
       
       
- 161)  Stack:[#57: Appl #56 #52]
+ 109)  Stack:[#25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Push 1; Eval; Mul; ...}, [#32, #33]>]
        Code:{Unwind}
       
       
- 162)  Stack:[#57: Appl #56 #52
-              #56: Appl #55 #23]
+ 110)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 163)  Stack:[#57: Appl #56 #52
-              #56: Appl #55 #23
-              #55: Appl #20 #54]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 164)  Stack:[#57: Appl #56 #52
-              #56: Appl #55 #23
-              #55: Appl #20 #54
-              #20: Global if]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 165)  Stack:[#57: Appl #56 #52
-              #52: Appl #51 #50
-              #23: 1
-              #54: Appl #53 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Push 0
-             Eval
-             (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 166)  Stack:[#57: Appl #56 #52
-              #52: Appl #51 #50
-              #23: 1
-              #54: Appl #53 #29
-              #54: Appl #53 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Eval
-             (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 167)  Stack:[#54: Appl #53 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Unwind}
-      
-      
- 168)  Stack:[#54: Appl #53 #29
-              #53: Appl #14 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Unwind}
-      
-      
- 169)  Stack:[#54: Appl #53 #29
-              #53: Appl #14 #37
-              #14: Global ==]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Unwind}
-      
-      
- 170)  Stack:[#54: Appl #53 #29
-              #29: 0
-              #37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Push 1
-             Eval
-             Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 171)  Stack:[#54: Appl #53 #29
-              #29: 0
-              #37: Appl #36 #23
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Eval
-             Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 172)  Stack:[#29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Push 1; Eval; Eq; ...}, [#37, #29, #54]>]
-       Code:{Unwind}
-      
-      
- 173)  Stack:[#54: Appl #53 #29
-              #29: 0
-              #37: Appl #36 #23
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 174)  Stack:[#54: Appl #53 #29
-              #29: 0
-              #37: Appl #36 #23
-              #29: 0
-              #37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 175)  Stack:[#37: Appl #36 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Unwind}
-      
-      
- 176)  Stack:[#37: Appl #36 #23
-              #36: Appl #10 #25]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Unwind}
-      
-      
- 177)  Stack:[#37: Appl #36 #23
-              #36: Appl #10 #25
-              #10: Global -]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Unwind}
-      
-      
- 178)  Stack:[#37: Appl #36 #23
-              #23: 1
-              #25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Push 1
-             Eval
-             Push 1
-             Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 179)  Stack:[#37: Appl #36 #23
-              #23: 1
-              #25: Ind #46
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Eval
-             Push 1
-             Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 180)  Stack:[#23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>
-             <{Push 1; Eval; Sub; ...}, [#25, #23, #37]>]
-       Code:{Unwind}
-      
-      
- 181)  Stack:[#37: Appl #36 #23
-              #23: 1
-              #25: Ind #46
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Push 1
-             Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 182)  Stack:[#37: Appl #36 #23
-              #23: 1
-              #25: Ind #46
-              #23: 1
-              #25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 183)  Stack:[#25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>
-             <{Sub; Update 2; Pop 2; ...}, [#23, #25, #23, #37]>]
-       Code:{Unwind}
-      
-      
- 184)  Stack:[#46: 2]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>
-             <{Sub; Update 2; Pop 2; ...}, [#23, #25, #23, #37]>]
-       Code:{Unwind}
-      
-      
- 185)  Stack:[#37: Appl #36 #23
-              #23: 1
-              #25: Ind #46
-              #23: 1
-              #46: 2]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 186)  Stack:[#37: Appl #36 #23
-              #23: 1
-              #25: Ind #46
-              #58: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 187)  Stack:[#37: Ind #58
-              #23: 1
-              #25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 188)  Stack:[#37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Unwind}
-      
-      
- 189)  Stack:[#58: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #37, #29, #54]>]
-       Code:{Unwind}
-      
-      
- 190)  Stack:[#54: Appl #53 #29
-              #29: 0
-              #37: Ind #58
-              #29: 0
-              #58: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 191)  Stack:[#54: Appl #53 #29
-              #29: 0
-              #37: Ind #58
-              #59: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 192)  Stack:[#54: Ind #59
-              #29: 0
-              #37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 193)  Stack:[#54: Ind #59]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Unwind}
-      
-      
- 194)  Stack:[#59: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#54, #23, #52, #57]>]
-       Code:{Unwind}
-      
-      
- 195)  Stack:[#57: Appl #56 #52
-              #52: Appl #51 #50
-              #23: 1
-              #54: Ind #59
-              #59: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{(Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 196)  Stack:[#57: Appl #56 #52
-              #52: Appl #51 #50
-              #23: 1
-              #54: Ind #59]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Push 2
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 197)  Stack:[#57: Appl #56 #52
-              #52: Appl #51 #50
-              #23: 1
-              #54: Ind #59
-              #52: Appl #51 #50]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Update 3
-             Pop 3
-             Unwind}
-      
-      
- 198)  Stack:[#57: Ind #52
-              #52: Appl #51 #50
-              #23: 1
-              #54: Ind #59]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pop 3
-             Unwind}
-      
-      
- 199)  Stack:[#57: Ind #52]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 200)  Stack:[#52: Appl #51 #50]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 201)  Stack:[#52: Appl #51 #50
-              #51: Appl #11 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 202)  Stack:[#52: Appl #51 #50
-              #51: Appl #11 #37
-              #11: Global *]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 203)  Stack:[#52: Appl #51 #50
-              #50: Appl #1 #49
-              #37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Push 1
-             Eval
-             Push 1
              Eval
              Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 204)  Stack:[#52: Appl #51 #50
-              #50: Appl #1 #49
-              #37: Ind #58
-              #50: Appl #1 #49]
+ 111)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Eval
-             Push 1
-             Eval
              Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 205)  Stack:[#50: Appl #1 #49]
+ 112)  Stack:[#32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Mul; Update 1; Pop 1; ...}, [#25, #32, #33]>]
        Code:{Unwind}
       
       
- 206)  Stack:[#50: Appl #1 #49
-              #1: Global fac]
+ 113)  Stack:[#34: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>
+             <{Mul; Update 1; Pop 1; ...}, [#25, #32, #33]>]
        Code:{Unwind}
       
       
- 207)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23]
+ 114)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #25: 1
+              #34: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushint 1
-             Push 1
-             Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
+       Code:{Mul
              Update 1
              Pop 1
              Unwind}
       
       
- 208)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #23: 1]
+ 115)  Stack:[#33: Appl #1 #32
+              #32: Ind #34
+              #41: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Push 1
-             Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 209)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #23: 1
-              #49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushglobal -
-             MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 210)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #23: 1
-              #49: Appl #48 #23
-              #10: Global -]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 211)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #23: 1
-              #60: Appl #10 #49]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 212)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #61: Appl #60 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushglobal fac
-             MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 213)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #61: Appl #60 #23
-              #1: Global fac]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 214)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #62: Appl #1 #61]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Push 1
-             Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 215)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #62: Appl #1 #61
-              #49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushglobal *
-             MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 216)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #62: Appl #1 #61
-              #49: Appl #48 #23
-              #11: Global *]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 217)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #62: Appl #1 #61
-              #63: Appl #11 #49]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 218)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushint 1
-             Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 219)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushint 0
-             Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 220)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Push 3
-             Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 221)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #29: 0
-              #49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushglobal ==
-             MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 222)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #29: 0
-              #49: Appl #48 #23
-              #14: Global ==]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 223)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #29: 0
-              #65: Appl #14 #49]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 224)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #66: Appl #65 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pushglobal if
-             MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 225)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #66: Appl #65 #29
-              #20: Global if]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 226)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #23: 1
-              #67: Appl #20 #66]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 227)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #64: Appl #63 #62
-              #68: Appl #67 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{MkAppl
-             Update 1
-             Pop 1
-             Unwind}
-      
-      
- 228)  Stack:[#50: Appl #1 #49
-              #49: Appl #48 #23
-              #69: Appl #68 #64]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Update 1
              Pop 1
              Unwind}
       
       
- 229)  Stack:[#50: Ind #69
-              #49: Appl #48 #23]
+ 116)  Stack:[#33: Ind #41
+              #32: Ind #34]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Pop 1
              Unwind}
       
       
- 230)  Stack:[#50: Ind #69]
+ 117)  Stack:[#33: Ind #41]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Unwind}
       
       
- 231)  Stack:[#69: Appl #68 #64]
+ 118)  Stack:[#41: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Push 1; Eval; Mul; ...}, [#27, #28]>]
        Code:{Unwind}
       
       
- 232)  Stack:[#69: Appl #68 #64
-              #68: Appl #67 #23]
+ 119)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #41: 1]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Unwind}
-      
-      
- 233)  Stack:[#69: Appl #68 #64
-              #68: Appl #67 #23
-              #67: Appl #20 #66]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Unwind}
-      
-      
- 234)  Stack:[#69: Appl #68 #64
-              #68: Appl #67 #23
-              #67: Appl #20 #66
-              #20: Global if]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Unwind}
-      
-      
- 235)  Stack:[#69: Appl #68 #64
-              #64: Appl #63 #62
-              #23: 1
-              #66: Appl #65 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Push 0
-             Eval
-             (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 236)  Stack:[#69: Appl #68 #64
-              #64: Appl #63 #62
-              #23: 1
-              #66: Appl #65 #29
-              #66: Appl #65 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Eval
-             (Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 237)  Stack:[#66: Appl #65 #29]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Unwind}
-      
-      
- 238)  Stack:[#66: Appl #65 #29
-              #65: Appl #14 #49]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Unwind}
-      
-      
- 239)  Stack:[#66: Appl #65 #29
-              #65: Appl #14 #49
-              #14: Global ==]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Unwind}
-      
-      
- 240)  Stack:[#66: Appl #65 #29
-              #29: 0
-              #49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Push 1
-             Eval
-             Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 241)  Stack:[#66: Appl #65 #29
-              #29: 0
-              #49: Appl #48 #23
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Eval
-             Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 242)  Stack:[#29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Push 1; Eval; Eq; ...}, [#49, #29, #66]>]
-       Code:{Unwind}
-      
-      
- 243)  Stack:[#66: Appl #65 #29
-              #29: 0
-              #49: Appl #48 #23
-              #29: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Push 1
-             Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 244)  Stack:[#66: Appl #65 #29
-              #29: 0
-              #49: Appl #48 #23
-              #29: 0
-              #49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Eval
-             Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 245)  Stack:[#49: Appl #48 #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Unwind}
-      
-      
- 246)  Stack:[#49: Appl #48 #23
-              #48: Appl #10 #37]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Unwind}
-      
-      
- 247)  Stack:[#49: Appl #48 #23
-              #48: Appl #10 #37
-              #10: Global -]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Unwind}
-      
-      
- 248)  Stack:[#49: Appl #48 #23
-              #23: 1
-              #37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Push 1
-             Eval
-             Push 1
-             Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 249)  Stack:[#49: Appl #48 #23
-              #23: 1
-              #37: Ind #58
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Eval
-             Push 1
-             Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 250)  Stack:[#23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>
-             <{Push 1; Eval; Sub; ...}, [#37, #23, #49]>]
-       Code:{Unwind}
-      
-      
- 251)  Stack:[#49: Appl #48 #23
-              #23: 1
-              #37: Ind #58
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Push 1
-             Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 252)  Stack:[#49: Appl #48 #23
-              #23: 1
-              #37: Ind #58
-              #23: 1
-              #37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Eval
-             Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 253)  Stack:[#37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>
-             <{Sub; Update 2; Pop 2; ...}, [#23, #37, #23, #49]>]
-       Code:{Unwind}
-      
-      
- 254)  Stack:[#58: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>
-             <{Sub; Update 2; Pop 2; ...}, [#23, #37, #23, #49]>]
-       Code:{Unwind}
-      
-      
- 255)  Stack:[#49: Appl #48 #23
-              #23: 1
-              #37: Ind #58
-              #23: 1
-              #58: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Sub
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 256)  Stack:[#49: Appl #48 #23
-              #23: 1
-              #37: Ind #58
-              #70: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 257)  Stack:[#49: Ind #70
-              #23: 1
-              #37: Ind #58]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 258)  Stack:[#49: Ind #70]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Unwind}
-      
-      
- 259)  Stack:[#70: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>
-             <{Eq; Update 2; Pop 2; ...}, [#29, #49, #29, #66]>]
-       Code:{Unwind}
-      
-      
- 260)  Stack:[#66: Appl #65 #29
-              #29: 0
-              #49: Ind #70
-              #29: 0
-              #70: 0]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Eq
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 261)  Stack:[#66: Appl #65 #29
-              #29: 0
-              #49: Ind #70
-              #71: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 262)  Stack:[#66: Ind #71
-              #29: 0
-              #49: Ind #70]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 263)  Stack:[#66: Ind #71]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Unwind}
-      
-      
- 264)  Stack:[#71: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>
-             <{(Cond
-             1-> {Push 1}
-             0-> {Push 2}); Update 3; Pop 3; ...}, [#66, #23, #64, #69]>]
-       Code:{Unwind}
-      
-      
- 265)  Stack:[#69: Appl #68 #64
-              #64: Appl #63 #62
-              #23: 1
-              #66: Ind #71
-              #71: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{(Cond
-             1-> {Push 1}
-             0-> {Push 2})
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 266)  Stack:[#69: Appl #68 #64
-              #64: Appl #63 #62
-              #23: 1
-              #66: Ind #71]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Push 1
-             Update 3
-             Pop 3
-             Unwind}
-      
-      
- 267)  Stack:[#69: Appl #68 #64
-              #64: Appl #63 #62
-              #23: 1
-              #66: Ind #71
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Update 3
-             Pop 3
-             Unwind}
-      
-      
- 268)  Stack:[#69: Ind #23
-              #64: Appl #63 #62
-              #23: 1
-              #66: Ind #71]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Pop 3
-             Unwind}
-      
-      
- 269)  Stack:[#69: Ind #23]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Unwind}
-      
-      
- 270)  Stack:[#23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Push 1; Eval; Mul; ...}, [#37, #50, #52]>]
-       Code:{Unwind}
-      
-      
- 271)  Stack:[#52: Appl #51 #50
-              #50: Ind #69
-              #37: Ind #58
-              #23: 1]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Push 1
              Eval
              Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 272)  Stack:[#52: Appl #51 #50
-              #50: Ind #69
-              #37: Ind #58
-              #23: 1
-              #37: Ind #58]
+ 120)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #41: 1
+              #27: Ind #29]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Eval
              Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 273)  Stack:[#37: Ind #58]
+ 121)  Stack:[#27: Ind #29]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Mul; Update 2; Pop 2; ...}, [#23, #37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Mul; Update 1; Pop 1; ...}, [#41, #27, #28]>]
        Code:{Unwind}
       
       
- 274)  Stack:[#58: 1]
+ 122)  Stack:[#29: 2]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>
-             <{Mul; Update 2; Pop 2; ...}, [#23, #37, #50, #52]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>
+             <{Mul; Update 1; Pop 1; ...}, [#41, #27, #28]>]
        Code:{Unwind}
       
       
- 275)  Stack:[#52: Appl #51 #50
-              #50: Ind #69
-              #37: Ind #58
-              #23: 1
-              #58: 1]
+ 123)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #41: 1
+              #29: 2]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 276)  Stack:[#52: Appl #51 #50
-              #50: Ind #69
-              #37: Ind #58
-              #72: 1]
+ 124)  Stack:[#28: Appl #1 #27
+              #27: Ind #29
+              #42: 2]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Update 2
-             Pop 2
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Update 1
+             Pop 1
              Unwind}
       
       
- 277)  Stack:[#52: Ind #72
-              #50: Ind #69
-              #37: Ind #58]
+ 125)  Stack:[#28: Ind #42
+              #27: Ind #29]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
-       Code:{Pop 2
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
+       Code:{Pop 1
              Unwind}
       
       
- 278)  Stack:[#52: Ind #72]
+ 126)  Stack:[#28: Ind #42]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Unwind}
       
       
- 279)  Stack:[#72: 1]
+ 127)  Stack:[#42: 2]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Push 1; Eval; Mul; ...}, [#25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Push 1; Eval; Mul; ...}, [#21, #22]>]
        Code:{Unwind}
       
       
- 280)  Stack:[#40: Appl #39 #38
-              #38: Ind #57
-              #25: Ind #46
-              #72: 1]
+ 128)  Stack:[#22: Appl #1 #21
+              #21: 3
+              #42: 2]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>]
        Code:{Push 1
              Eval
              Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 281)  Stack:[#40: Appl #39 #38
-              #38: Ind #57
-              #25: Ind #46
-              #72: 1
-              #25: Ind #46]
+ 129)  Stack:[#22: Appl #1 #21
+              #21: 3
+              #42: 2
+              #21: 3]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>]
        Code:{Eval
              Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 282)  Stack:[#25: Ind #46]
+ 130)  Stack:[#21: 3]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Mul; Update 2; Pop 2; ...}, [#72, #25, #38, #40]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>
+             <{Mul; Update 1; Pop 1; ...}, [#42, #21, #22]>]
        Code:{Unwind}
       
       
- 283)  Stack:[#46: 2]
+ 131)  Stack:[#22: Appl #1 #21
+              #21: 3
+              #42: 2
+              #21: 3]
        Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>
-             <{Mul; Update 2; Pop 2; ...}, [#72, #25, #38, #40]>]
-       Code:{Unwind}
-      
-      
- 284)  Stack:[#40: Appl #39 #38
-              #38: Ind #57
-              #25: Ind #46
-              #72: 1
-              #46: 2]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>]
        Code:{Mul
-             Update 2
-             Pop 2
+             Update 1
+             Pop 1
              Unwind}
       
       
- 285)  Stack:[#40: Appl #39 #38
-              #38: Ind #57
-              #25: Ind #46
-              #73: 2]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 286)  Stack:[#40: Ind #73
-              #38: Ind #57
-              #25: Ind #46]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 287)  Stack:[#40: Ind #73]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
- 288)  Stack:[#73: 2]
-       Dump:[<{}, []>
-             <{Push 1; Eval; Mul; ...}, [#21, #26, #28]>]
-       Code:{Unwind}
-      
-      
- 289)  Stack:[#28: Appl #27 #26
-              #26: Ind #45
+ 132)  Stack:[#22: Appl #1 #21
               #21: 3
-              #73: 2]
-       Dump:[<{}, []>]
-       Code:{Push 1
-             Eval
-             Mul
-             Update 2
-             Pop 2
+              #43: 6]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Update 1
+             Pop 1
              Unwind}
       
       
- 290)  Stack:[#28: Appl #27 #26
-              #26: Ind #45
-              #21: 3
-              #73: 2
+ 133)  Stack:[#22: Ind #43
               #21: 3]
-       Dump:[<{}, []>]
-       Code:{Eval
-             Mul
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 291)  Stack:[#21: 3]
        Dump:[<{}, []>
-             <{Mul; Update 2; Pop 2; ...}, [#73, #21, #26, #28]>]
+             <{Update 0; Pop 0; Unwind}, [#2]>]
+       Code:{Pop 1
+             Unwind}
+      
+      
+ 134)  Stack:[#22: Ind #43]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
        Code:{Unwind}
       
       
- 292)  Stack:[#28: Appl #27 #26
-              #26: Ind #45
-              #21: 3
-              #73: 2
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Mul
-             Update 2
-             Pop 2
-             Unwind}
-      
-      
- 293)  Stack:[#28: Appl #27 #26
-              #26: Ind #45
-              #21: 3
-              #74: 6]
-       Dump:[<{}, []>]
-       Code:{Update 2
-             Pop 2
-             Unwind}
-      
-      
- 294)  Stack:[#28: Ind #74
-              #26: Ind #45
-              #21: 3]
-       Dump:[<{}, []>]
-       Code:{Pop 2
-             Unwind}
-      
-      
- 295)  Stack:[#28: Ind #74]
-       Dump:[<{}, []>]
+ 135)  Stack:[#43: 6]
+       Dump:[<{}, []>
+             <{Update 0; Pop 0; Unwind}, [#2]>]
        Code:{Unwind}
       
       
- 296)  Stack:[#74: 6]
+ 136)  Stack:[#2: Global main
+              #43: 6]
+       Dump:[<{}, []>]
+       Code:{Update 0
+             Pop 0
+             Unwind}
+      
+      
+ 137)  Stack:[#2: Ind #43]
+       Dump:[<{}, []>]
+       Code:{Pop 0
+             Unwind}
+      
+      
+ 138)  Stack:[#2: Ind #43]
        Dump:[<{}, []>]
        Code:{Unwind}
       
       
- 297)  Stack:[#74: 6]
+ 139)  Stack:[#43: 6]
+       Dump:[<{}, []>]
+       Code:{Unwind}
+      
+      
+ 140)  Stack:[#43: 6]
        Dump:[]
        Code:{}
       
       
 
 
-Steps taken = 296
+Steps taken = 139

@@ -67,9 +67,15 @@ let unwind state =
 			)
 		| NAppl(a1, a2) -> 
 			putCode [Unwind] (putStack (a1::a::ads) state)
-		| NGlobal(n, code) -> if List.length ads < n then
-			raise (GmEvaluationError
-				("Unwinding with too few arguments"))
+		| NGlobal(n, code) -> 
+			let k = List.length ads
+			in if k < n then (match getDump state with
+				| [] -> raise (GmEvaluationError
+				("Unwinding with too few arguments and empty dump"))
+				| (code', s')::d' ->
+					let state' = putStack (Lists.last ads :: s') state
+					in putCode code' (putDump d' state')
+			)
 			else 
 				let stack' = rearrange n heap stack
 				in putCode code (putStack stack' state)

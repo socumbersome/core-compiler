@@ -25,6 +25,10 @@ let compiledPrimitives = [
 		[Push 0; Eval; Cond([Push 1], [Push 2]); Update 3; Pop 3; Unwind])
 	];;
 
+let builtInBinary = [ ("+", Add); ("-", Sub); ("*", Mul);
+	("/", Div); ("==", Eq); ("!=", Ne); ("<", Lt);
+	("<=", Le); (">", Gt); (">=", Ge) ];;
+
 let argOffset n env = List.map (fun (v, m) -> (v, m + n)) env;;
 
 let compileArgs defs env =
@@ -55,6 +59,7 @@ and compileLetrec comp defs expr env =
 	in [Alloc n] @ compileLetrec' defs env' (n - 1)
 	@ comp expr env' @ [Slide n]
 
+(* compile in lazy context *)
 and compileC expr env = match expr with
 	| EVar v -> (match Lists.aLookup env v with
 		| Some n -> [Push n]
@@ -72,9 +77,27 @@ and compileC expr env = match expr with
 		("cannot compile lambda abstractions yet"))
 	;;
 
+(* compile in strict context *)
+let rec compileE expr env = match expr with
+	| ENum n -> [Pushint n]
+	| ELet(isrec, defs, e) -> if isrec then
+		compileLetrec compileE defs e env
+		else compileLet compileE defs e env
+	| EAppl(EAppl(EVar op, e1), e2) when 
+		List.mem op (Lists.aDomain builtInBinary) ->
+		let Some ibin = Lists.aLookup builtInBinary op
+		in compileE e2 env @ compileE e1 (argOffset 1 env) @ [ibin]
+		(*@ [Lists.aLookup builtInBinary op] *)
+	| EAppl(EVar "neg", e) ->
+		compileE e env @ [Neg]
+	| EAppl(EAppl(EAppl(EVar "if", e0), e1), e2) ->
+		compileE e0 env 
+		@ [Cond(compileE e1 env, compileE e2 env)]
+	| _ -> compileC expr env @ [Eval]
+
 let compileR e env =
 	let n = List.length env
-	in compileC e env @ [Update n; Pop n; Unwind];;
+	in compileE e env @ [Update n; Pop n; Unwind];;
 
 let compileSc (name, varsn, body) =
 	let n = List.length varsn
