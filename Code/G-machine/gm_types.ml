@@ -44,8 +44,11 @@ type node
 let gmTrue = NConstr(2, []);;
 let gmFalse = NConstr(1, []);;
 
-(*let bool2gmBool b =
-	if b then gmTrue else gmFalse;;*)
+let bool2gmBool b =
+	if b then gmTrue else gmFalse;;
+
+let gmPackRegexp = Str.regexp 
+	"^Pack{\\([1-9][0-9]*\\),\\([0-9]+\\)}$";;
 
 type gmHeap = node heap;;
 

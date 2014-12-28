@@ -83,7 +83,7 @@ and compileLetrec comp defs expr env =
 	in [Alloc n] @ compileLetrec' defs env' (n - 1)
 	@ comp expr env' @ [Slide n]
 
-(* compile in lazy context - C scheme *)
+(* compile in non-strict (lazy) context - C scheme *)
 and compileC expr env = match expr with
 (*	| EVar "true" -> [Pushglobal "true"]
 	| EVar "false" -> [Pushglobal "false"] *)
@@ -106,9 +106,8 @@ and compileC expr env = match expr with
 		("cannot compile case exprs in lazy ctxt yet"))
 	| ELambd(vars, e) -> raise (GmCompilationError
 		("cannot compile lambda abstractions yet"))
-	| EConstr(t, a) -> raise (GmCompilationError 
-		("probably unsaturated constructor: Pack{" ^
-		(string_of_int t) ^ ", " ^ (string_of_int a) ^ "}"))
+	| EConstr(t, a) -> [Pushglobal ("Pack{" ^ string_of_int t
+		^ "," ^ string_of_int a ^ "}") ]
 	;;
 
 (* D scheme compilation; comp should correspond to A scheme *)

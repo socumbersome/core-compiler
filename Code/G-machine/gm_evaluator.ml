@@ -8,8 +8,18 @@ let gmFinal s = (getCode s) = [];;
 let pushglobal f state =
 	match (Lists.aLookup (getGlobals state) f) with
 	| Some a -> putStack (a::getStack state) state
-	| None -> raise (GmEvaluationError 
-		("Undeclared global " ^ f));;
+	| None -> if Str.string_match gmPackRegexp f 0 then
+	(* TODO: use some library for regexpes because those in
+		Str are ugly, thread non-safe, and ugly :P *)
+			let tag = int_of_string <| Str.matched_group 1 f
+			in let arity = int_of_string <| Str.matched_group 2 f
+			in let npack = Pack(tag, arity)
+			in let nglob = NGlobal(arity, [npack; Update 0; Unwind])
+			in let (h', a') = hAlloc (getHeap state) nglob
+			in let s' = putGlobals ((f, a')::getGlobals state) state
+			in putHeap h' (putStack (a'::getStack s') s')
+		else
+			raise (GmEvaluationError ("Undeclared global " ^ f));;
 
 let pushint n state =
 	match (Lists.aLookup (getGlobals state) (string_of_int n)) with
@@ -113,8 +123,9 @@ let boxInteger n state =
 	in putStack (a::getStack state) (putHeap h' state);;
 
 let boxBoolean b state =
-	let b' = if b then 1 else 0 (* 2 is tag for true; 1 for false *)
-	in let (h', a) = hAlloc (getHeap state) (NNum b')
+	let bn = bool2gmBool b
+	(*let b' = if b then 1 else 0*)(* 2 is tag for true; 1 for false *)
+	in let (h', a) = hAlloc (getHeap state) bn (*(NNum b')*)
 	in putStack (a::getStack state) (putHeap h' state);;
 	(*let globals = getGlobals state
 	in if b then
@@ -182,12 +193,12 @@ let dispatchComparison = function
 let cond code1 code2 state =
 	let (a::ads) = getStack state
 	in match (hLookup (getHeap state) a) with
-		| NNum 1 (*gmTrue*) ->
+		| (*NNum 1*) gmTrue ->
 			putCode (code1 @ getCode state) (putStack ads state)
-		| NNum 0 (*gmFalse*) ->
+		| (*NNum 0*) gmFalse ->
 			putCode (code2 @ getCode state) (putStack ads state)
 		| _ -> raise (GmEvaluationError (
-		"Cond didn't find NNum 0 or NNum 1 on top of the stack"))
+		"Cond didn't find gmTrue or gmFalse on top of the stack"))
 	;;
 
 let pack tag arity state =

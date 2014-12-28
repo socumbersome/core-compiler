@@ -12,4 +12,5 @@ SOURCES = \
 	core_compiler.ml
 
 OCAMLMAKEFILE = OCamlMakefile
+LIBS = str
 include $(OCAMLMAKEFILE)
