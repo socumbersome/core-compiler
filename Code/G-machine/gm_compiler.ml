@@ -85,6 +85,8 @@ and compileLetrec comp defs expr env =
 
 (* compile in lazy context - C scheme *)
 and compileC expr env = match expr with
+(*	| EVar "true" -> [Pushglobal "true"]
+	| EVar "false" -> [Pushglobal "false"] *)
 	| EVar v -> (match Lists.aLookup env v with
 		| Some n -> [Push n]
 		| None -> [Pushglobal v]
@@ -104,8 +106,9 @@ and compileC expr env = match expr with
 		("cannot compile case exprs in lazy ctxt yet"))
 	| ELambd(vars, e) -> raise (GmCompilationError
 		("cannot compile lambda abstractions yet"))
-	| EConstr(t, a) -> raise (GmCompilationError ("unknow thing: " ^
-		(string_of_int t) ^ ", " ^ (string_of_int a)))
+	| EConstr(t, a) -> raise (GmCompilationError 
+		("probably unsaturated constructor: Pack{" ^
+		(string_of_int t) ^ ", " ^ (string_of_int a) ^ "}"))
 	;;
 
 (* D scheme compilation; comp should correspond to A scheme *)
@@ -164,8 +167,15 @@ let buildInitialHeap program =
 	in Lists.mapAccuml allocateSc hInitial
 		(compiled @ compiledPrimitives);;
 
-let initialCode = [Pushglobal "main"; Eval; Print(*; Eval*)];;
+(** DEPRECATED *)
+let allocateAtomicValues heap globals =
+	let (h', truea) = hAlloc heap gmTrue
+	in let (h'', falsea) = hAlloc h' gmFalse
+	in (h'', ("true", truea)::("false", falsea)::globals)
+
+let initialCode = [Pushglobal "main"; Eval; Print];;
 
 let compile program =
 	let (heap, globals) = buildInitialHeap program
+	(*in let (h', g') = allocateAtomicValues heap globals*)
 	in ("", initialCode, [], [], heap, globals, statInitial);;

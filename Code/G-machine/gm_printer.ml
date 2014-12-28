@@ -41,6 +41,7 @@ let rec showInstruction = function
 		); iStr ")" ]
 	| Split n -> iConcat [ iStr "Split "; iNum n ]
 	| Print -> iStr "Print"
+	| PrintEndStruct -> iStr "PrintEndStruct"
 
 and showInstructions code =
 	iConcat [ iStr " Code:{";

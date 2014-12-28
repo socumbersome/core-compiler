@@ -86,6 +86,12 @@ let rec pprExpr = function
 		List.mem op ["+"; "-"; "*"; "/"; "<"; ">"; "<="; ">="]
 		-> iConcat [pprAExpr e1; iStr (" " ^ op ^ " "); 
 		pprAExpr e2]
+	| EAppl(EVar "neg", e) -> 
+		iConcat [ iStr "neg "; pprAExpr e ]
+	| EAppl(EAppl(EAppl(EVar "if", e0), e1), e2) ->
+		iConcat [ iStr "if "; pprExpr e0; iStr " then"; iNewline;
+		iStr "  "; iIndent (pprExpr e1); iNewline; iStr "else";
+		iNewline; iStr "  "; iIndent (pprExpr e2) ]
 	| EAppl(e1, e2) ->
 		iConcat [ pprExpr e1; iStr " "; pprAExpr e2 ]
 	| ELet(isrec, defns, expr) ->

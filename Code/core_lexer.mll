@@ -40,6 +40,8 @@ rule token = parse
 	| "in" { IN }
 	| "of" { OF }
 	| "if" { IF }
+	| "then" { THEN }
+	| "else" { ELSE }
 	| "Pack" { CONSTRUCTOR }
 	| "true" { TRUE }
 	| "false" { FALSE }

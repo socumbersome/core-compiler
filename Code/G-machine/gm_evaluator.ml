@@ -113,9 +113,16 @@ let boxInteger n state =
 	in putStack (a::getStack state) (putHeap h' state);;
 
 let boxBoolean b state =
-	let b' = if b then 1 else 0
+	let b' = if b then 1 else 0 (* 2 is tag for true; 1 for false *)
 	in let (h', a) = hAlloc (getHeap state) (NNum b')
 	in putStack (a::getStack state) (putHeap h' state);;
+	(*let globals = getGlobals state
+	in if b then
+		let Some ta = Lists.aLookup globals "true"
+		in putStack (ta::getStack state)
+	else
+		let Some fa = Lists.aLookup globals "false"
+		in putStack (fa::getStack state) *)
 
 let unboxInteger a state =
 	let ub = function
@@ -175,12 +182,12 @@ let dispatchComparison = function
 let cond code1 code2 state =
 	let (a::ads) = getStack state
 	in match (hLookup (getHeap state) a) with
-		| NNum 1 ->
+		| NNum 1 (*gmTrue*) ->
 			putCode (code1 @ getCode state) (putStack ads state)
-		| NNum 0 ->
+		| NNum 0 (*gmFalse*) ->
 			putCode (code2 @ getCode state) (putStack ads state)
 		| _ -> raise (GmEvaluationError (
-		"Cond didn't find NNum 1 or NNum 0 on top of the stack"))
+		"Cond didn't find NConstr(2, []) or NConstr(1, []) on top of the stack"))
 	;;
 
 let pack tag arity state =
@@ -221,16 +228,29 @@ let print state =
 	let (a::ads) = getStack state
 	in match hLookup (getHeap state) a with
 		| NNum n -> 
-			let nout = getOutput state ^ " " ^ string_of_int n
+			let nout = getOutput state ^ string_of_int n ^ " "
 			in putStack ads (putOutput nout state)
+(*		| gmTrue ->
+			let nout = getOutput state ^ "true "
+			in putStack ads (putOutput nout state)
+		| gmFalse ->
+			let nout = getOutput state ^ "false "
+			in putStack ads (putOutput nout state) *)
 		| NConstr(tag, args) -> (* for now prints only arguments *)
 			let n = List.length args
 			in let evpr = List.flatten <| Lists.buildn n [Eval; Print]
-			in let s' = putCode (evpr @ getCode state) state
-			in putStack (args @ ads) s'
+			in let s' = putCode
+				(evpr @ [PrintEndStruct] @ getCode state) state
+			in let stag = string_of_int tag
+			in putStack (args @ ads)
+				(putOutput (getOutput s' ^ "[" ^ stag ^ ": ") s')
 		| _ -> raise (GmEvaluationError ("Print expected "
 		^ "NConstr or NNum node on top of stack but found sth else"))
 	;;
+
+let printEndStruct state =
+	let nout = getOutput state ^ "] "
+	in putOutput nout state;;
 
 let dispatch i = match i with
 	| Pushglobal f -> pushglobal f
@@ -253,6 +273,7 @@ let dispatch i = match i with
 	| Casejump alts -> casejump alts
 	| Split n -> split n
 	| Print -> print
+	| PrintEndStruct -> printEndStruct
 	;;
 
 let step state =

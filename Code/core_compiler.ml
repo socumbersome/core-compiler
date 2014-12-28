@@ -18,6 +18,6 @@ let main () =
 	in let gmrun = Gm_evaluator.eval compiledToGm
 	in let res = Gm_printer.showResults gmrun
 	in print_string res
-	(*(Core_printer.pprint program)*);;
+	(*Core_printer.pprint program*);;
 
 let _ = main ();;

@@ -20,7 +20,7 @@
 
 %token SEMICOLON
 %token LET LETREC IN
-%token CASE OF ALT_ARROW IF
+%token CASE OF ALT_ARROW IF THEN ELSE
 %token LAMBDA LAMBDA_DOT
 %token CONSTRUCTOR
 %token COMMA
@@ -69,8 +69,8 @@ expr: expr aexpr { EAppl($1, $2) }
 	| TRUE { EVar "true" }
 	| FALSE { EVar "false" }
 	| NEG aexpr { EAppl(EVar "neg", $2) }
-	| IF expr aexpr aexpr { 
-		EAppl(EAppl(EAppl(EVar "if", $2), $3), $4) }
+	| IF expr THEN expr ELSE expr { 
+		EAppl(EAppl(EAppl(EVar "if", $2), $4), $6) }
 /*	| MINUS expr %prec UNARY_MINUS { EAppl(EAppl(EVar "-", ENum 0), $2) } */
 	| LET defns IN expr { ELet(Core_types.nonRecursive, $2, $4) }
 	| LETREC defns IN expr { ELet(Core_types.recursive, $2, $4) }

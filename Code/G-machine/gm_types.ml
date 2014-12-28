@@ -23,6 +23,7 @@ type instruction
 	| Casejump of (int * gmCode) list
 	| Split of int
 	| Print
+	| PrintEndStruct
 
 and  gmCode = instruction list;;
 type gmStack = addr list;;
@@ -39,6 +40,12 @@ type node
 	| NInd of addr (* an indirection node *)
 	| NConstr of int * addr list (* structured data - int is a tag *)
 	;;
+
+let gmTrue = NConstr(2, []);;
+let gmFalse = NConstr(1, []);;
+
+(*let bool2gmBool b =
+	if b then gmTrue else gmFalse;;*)
 
 type gmHeap = node heap;;
 
