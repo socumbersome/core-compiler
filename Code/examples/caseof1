@@ -5,6 +5,6 @@ length xs = case xs of
 	{2} y ys -> 1 + length ys ;
 //main = /*length*/ (Pack{2,2} 1 (Pack{2,2} 2 Pack{1, 0})) //(cons 1 (cons 2 nil))
 //main = Pack{2,4} 5 2 (Pack{1,3} (Pack{3,0} ) 9 8) 1 
-main = if true then 2 else 3
+main = if 4 then 2 else 3
 /*(Pack{2, 2} 3 (
 	Pack{4, 2} 5 (Pack{1, 0}))) */

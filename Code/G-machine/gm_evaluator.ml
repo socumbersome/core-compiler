@@ -187,7 +187,7 @@ let cond code1 code2 state =
 		| NNum 0 (*gmFalse*) ->
 			putCode (code2 @ getCode state) (putStack ads state)
 		| _ -> raise (GmEvaluationError (
-		"Cond didn't find NConstr(2, []) or NConstr(1, []) on top of the stack"))
+		"Cond didn't find NNum 0 or NNum 1 on top of the stack"))
 	;;
 
 let pack tag arity state =
