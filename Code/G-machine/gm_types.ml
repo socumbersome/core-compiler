@@ -19,6 +19,10 @@ type instruction
 	| Add | Sub | Mul | Div | Neg
 	| Eq | Ne | Lt | Le | Gt | Ge
 	| Cond of gmCode * gmCode
+	| Pack of int * int
+	| Casejump of (int * gmCode) list
+	| Split of int
+	| Print
 
 and  gmCode = instruction list;;
 type gmStack = addr list;;
@@ -33,6 +37,7 @@ type node
 	| NGlobal of int * gmCode (* number of agruments and
 		a code sequence to be executed when arguments are given *)
 	| NInd of addr (* an indirection node *)
+	| NConstr of int * addr list (* structured data - int is a tag *)
 	;;
 
 type gmHeap = node heap;;
@@ -41,7 +46,10 @@ type gmGlobals = (cName, addr) Lists.assoc;;
 
 type gmStats = int;;
 
+type gmOutput = string;;
+
 type gmState = (
+	gmOutput *	(* current output *)
 	gmCode *	(* current instruction stream *)
 	gmStack *	(* current stack *)
 	gmDump *	(* current Dump *)
@@ -50,30 +58,34 @@ type gmState = (
 	gmStats	(* statistics *)
 	);;
 
-let getCode (code, _, _, _, _, _) = code;;
-let putCode code (_, stack, dump, heap, globals, stats) =
-	(code, stack, dump, heap, globals, stats);;
+let getOutput (out, _, _, _, _, _, _) = out;;
+let putOutput out (_, code, stack, dump, heap, globals, stats) =
+	(out, code, stack, dump, heap, globals, stats);;
 
-let getStack (_, stack, _, _, _, _) = stack;;
-let putStack stack (code, _, dump, heap, globals, stats) =
-	(code, stack, dump, heap, globals, stats);;
+let getCode (_, code, _, _, _, _, _) = code;;
+let putCode code (out, _, stack, dump, heap, globals, stats) =
+	(out, code, stack, dump, heap, globals, stats);;
 
-let getDump (_, _, dump, _, _, _) = dump;;
-let putDump dump (code, stack, _, heap, globals, stats) =
-	(code, stack, dump, heap, globals, stats);;
+let getStack (_, _, stack, _, _, _, _) = stack;;
+let putStack stack (out, code, _, dump, heap, globals, stats) =
+	(out, code, stack, dump, heap, globals, stats);;
 
-let getHeap (_, _, _, heap, _, _) = heap;;
-let putHeap heap (code, stack, dump, _, globals, stats) =
-	(code, stack, dump, heap, globals, stats);;
+let getDump (_, _, _, dump, _, _, _) = dump;;
+let putDump dump (out, code, stack, _, heap, globals, stats) =
+	(out, code, stack, dump, heap, globals, stats);;
 
-let getGlobals (_, _, _, _, globals, _) = globals;;
-let putGlobals globals (code, stack, dump, heap, _, stats) =
-	(code, stack, dump, heap, globals, stats);;
+let getHeap (_, _, _, _, heap, _, _) = heap;;
+let putHeap heap (out, code, stack, dump, _, globals, stats) =
+	(out, code, stack, dump, heap, globals, stats);;
+
+let getGlobals (_, _, _, _, _, globals, _) = globals;;
+let putGlobals globals (out, code, stack, dump, heap, _, stats) =
+	(out, code, stack, dump, heap, globals, stats);;
 
 let statInitial = 0;;
 let statIncSteps s = s + 1;;
 let statGetSteps s = s;;
 
-let getStats (_, _, _, _, _, stats) = stats;;
-let putStats stats (code, stack, dump, heap, globals, _) =
-	(code, stack, dump, heap, globals, stats);;
+let getStats (_, _, _, _, _, _, stats) = stats;;
+let putStats stats (out, code, stack, dump, heap, globals, _) =
+	(out, code, stack, dump, heap, globals, stats);;

@@ -9,6 +9,8 @@ type gmCompiledSC = (cName * int * gmCode);;
 type gmEnvironment = (cName, int) Lists.assoc;;
 type gmCompiler = coreExpr -> gmEnvironment -> gmCode;;
 
+exception UnsaturatedConstructor;;
+
 let compiledPrimitives = [
 	("+", 2, [Push 1; Eval; Push 1; Eval; Add; Update 2; Pop 2; Unwind]);
 	("-", 2, [Push 1; Eval; Push 1; Eval; Sub; Update 2; Pop 2; Unwind]);
@@ -30,6 +32,28 @@ let builtInBinary = [ ("+", Add); ("-", Sub); ("*", Mul);
 	("<=", Le); (">", Gt); (">=", Ge) ];;
 
 let argOffset n env = List.map (fun (v, m) -> (v, m + n)) env;;
+
+let dismantleConstr expr =
+	let rec aux gathered howmany = function
+		| EAppl(e, ei) -> aux (ei::gathered) (howmany + 1) e
+		| EConstr(tag, arity) as cons -> if arity = howmany then
+			(cons, gathered)
+			else raise UnsaturatedConstructor
+		| _ -> raise UnsaturatedConstructor
+	in aux [] 0 expr;;
+
+(* terribly inefficient ;(
+TODO: find a better way! *)
+let isSaturatedConstr expr = try 
+	let _ = dismantleConstr expr in true with
+		| UnsaturatedConstructor -> false
+	;;
+
+let rec compileExprAscEnv comp exs env = match exs with
+	| [] -> []
+	| e::es -> 
+		comp e env @ compileExprAscEnv comp es (argOffset 1 env)
+	;;
 
 let compileArgs defs env =
 	let n = List.length defs
@@ -59,25 +83,40 @@ and compileLetrec comp defs expr env =
 	in [Alloc n] @ compileLetrec' defs env' (n - 1)
 	@ comp expr env' @ [Slide n]
 
-(* compile in lazy context *)
+(* compile in lazy context - C scheme *)
 and compileC expr env = match expr with
 	| EVar v -> (match Lists.aLookup env v with
 		| Some n -> [Push n]
 		| None -> [Pushglobal v]
 		)
 	| ENum n -> [Pushint n]
+	| satc when isSaturatedConstr satc ->
+	(* I fear the idea with looking for EConstr is really bad... *)
+		let (EConstr(tag, arity), args) = dismantleConstr satc
+		in compileExprAscEnv compileC (List.rev args) env
+			@ [Pack(tag, arity)]
 	| EAppl(e1, e2) -> compileC e2 env 
 		@ compileC e1 (argOffset 1 env) @ [MkAppl]
 	| ELet(isrec, defs, e) -> if isrec then
 		compileLetrec compileC defs e env
 		else compileLet compileC defs e env
 	| ECase(e, alts) -> raise (GmCompilationError 
-		("cannot compile case exprs yet"))
+		("cannot compile case exprs in lazy ctxt yet"))
 	| ELambd(vars, e) -> raise (GmCompilationError
 		("cannot compile lambda abstractions yet"))
+	| EConstr(t, a) -> raise (GmCompilationError ("unknow thing: " ^
+		(string_of_int t) ^ ", " ^ (string_of_int a)))
 	;;
 
-(* compile in strict context *)
+(* D scheme compilation; comp should correspond to A scheme *)
+let compileAlts comp alts env =
+	List.map (fun (tag, names, body) -> 
+		let n = List.length names
+		in (tag, comp n body (Lists.zip names (Lists.range 0 (n - 1))
+			@ argOffset n env))
+	) alts;;
+
+(* compile in strict context - E scheme *)
 let rec compileE expr env = match expr with
 	| ENum n -> [Pushint n]
 	| ELet(isrec, defs, e) -> if isrec then
@@ -87,13 +126,23 @@ let rec compileE expr env = match expr with
 		List.mem op (Lists.aDomain builtInBinary) ->
 		let Some ibin = Lists.aLookup builtInBinary op
 		in compileE e2 env @ compileE e1 (argOffset 1 env) @ [ibin]
-		(*@ [Lists.aLookup builtInBinary op] *)
 	| EAppl(EVar "neg", e) ->
 		compileE e env @ [Neg]
 	| EAppl(EAppl(EAppl(EVar "if", e0), e1), e2) ->
 		compileE e0 env 
 		@ [Cond(compileE e1 env, compileE e2 env)]
+	| ECase(e, alts) -> compileE e env
+		@ [Casejump (compileAlts compileE' alts env)]
+	| satc when isSaturatedConstr satc ->
+	(* mind you - the same code as in compileC ! *)
+		let (EConstr(tag, arity), args) = dismantleConstr satc
+		in compileExprAscEnv compileC (List.rev args) env
+			@ [Pack(tag, arity)]
 	| _ -> compileC expr env @ [Eval]
+
+(* plays role of A scheme compilation *)
+and compileE' offset expr env =
+	[Split offset] @ compileE expr env @ [Slide offset];;
 
 let compileR e env =
 	let n = List.length env
@@ -115,8 +164,8 @@ let buildInitialHeap program =
 	in Lists.mapAccuml allocateSc hInitial
 		(compiled @ compiledPrimitives);;
 
-let initialCode = [Pushglobal "main"; Eval];;
+let initialCode = [Pushglobal "main"; Eval; Print(*; Eval*)];;
 
 let compile program =
 	let (heap, globals) = buildInitialHeap program
-	in (initialCode, [], [], heap, globals, statInitial);;
+	in ("", initialCode, [], [], heap, globals, statInitial);;

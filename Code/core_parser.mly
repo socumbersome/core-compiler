@@ -95,11 +95,11 @@ defns: defn SEMICOLON defns { $1 :: $3 }
 defn: VARIABLE ASSIGNMENT expr { ($1, $3) }
 ;
 
-alts: alt SEMICOLON alts { $1 :: $3 }
+alts: alt /*SEMICOLON*/ COMMA alts { $1 :: $3 }
 	| alt { [$1] }
 ;
 
-alt: CARET NUMBER CARET varsz ALT_ARROW expr 
+alt: /*CARET*/LCURLY_BRACKET NUMBER /*CARET*/RCURLY_BRACKET varsz ALT_ARROW expr 
 	{ ($2, $4, $6) }
 ;
 

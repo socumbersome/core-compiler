@@ -27,9 +27,20 @@ let rec showInstruction = function
 	| Gt -> iStr "Gt"
 	| Ge -> iStr "Ge"
 	| Cond(code1, code2) -> iConcat [ iStr "(Cond"; iNewline;
-		iStr "1-> ";
-		shortShowInstructions 3 code1; iNewline; iStr "0-> ";
+		iStr "1 -> ";
+		shortShowInstructions 3 code1; iNewline; iStr "0 -> ";
 		shortShowInstructions 3 code2; iStr ")" ]
+	| Pack(tag, arity) -> iConcat [ iStr "Pack ";
+		iNum tag; iStr ", "; iNum arity ]
+	| Casejump alts -> iConcat [ iStr "(Casejump"; iNewline;
+		iInterleave iNewline (
+			List.map (fun (t, code) ->
+				iConcat [ iNum t; iStr " -> "; 
+				shortShowInstructions 4 code ] )
+			alts
+		); iStr ")" ]
+	| Split n -> iConcat [ iStr "Split "; iNum n ]
+	| Print -> iStr "Print"
 
 and showInstructions code =
 	iConcat [ iStr " Code:{";
@@ -60,7 +71,12 @@ let showNode s a = function
 		in iConcat [ iStr "Global "; iStr v]
 	| NAppl(a1, a2) -> iConcat [ iStr "Appl "; iStr (showaddr a1);
 		iStr " "; iStr (showaddr a2) ]
-	| NInd a -> iConcat [ iStr "Ind "; iStr (showaddr a) ];;
+	| NInd a -> iConcat [ iStr "Ind "; iStr (showaddr a) ]
+	| NConstr(t, ads) -> iConcat [ iStr "Constr "; iNum t;
+		iStr " ["; iInterleave (iStr ", ")
+			(List.map (iStr << showaddr) ads);
+		iStr "]" ]
+	;;
 
 let showStackItem s a =
 	iConcat [ iStr (showaddr a); iStr ": ";
@@ -86,7 +102,12 @@ let showDump s =
 			(List.map showDumpItem (List.rev (getDump s))));
 		iStr "]" ];;
 
-let showState s = iConcat [ showStack s; iNewline;
+let showOutput s =
+	iConcat [ iStr "Output:\""; iStr (getOutput s); iStr "\"" ];;
+
+let showState s = iConcat [
+	showOutput s; iNewline;
+	showStack s; iNewline;
 	showDump s; iNewline;
 	showInstructions (getCode s); iNewline ];;
 

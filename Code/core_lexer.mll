@@ -40,7 +40,7 @@ rule token = parse
 	| "in" { IN }
 	| "of" { OF }
 	| "if" { IF }
-	| "Constructor" { CONSTRUCTOR }
+	| "Pack" { CONSTRUCTOR }
 	| "true" { TRUE }
 	| "false" { FALSE }
 	| var as varname { VARIABLE varname }

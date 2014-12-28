@@ -95,7 +95,7 @@ let rec pprExpr = function
 			iNewline; iStr "in ";
 			pprExpr expr ]
 	| EConstr(a, b) ->
-		iConcat [ iStr "Constructor{";
+		iConcat [ iStr "Pack{";
 			iStr (string_of_int a);
 			iStr ",";
 			iStr (string_of_int b);
@@ -108,13 +108,13 @@ let rec pprExpr = function
 		iStr ". "; pprExpr expr ]
 
 and pprAlt (tag, vars, expr) =
-	iConcat [ iStr "#"; iStr (string_of_int tag);
-		iStr "# "; pprVars vars; iStr "-> ";
+	iConcat [ iStr "{"; iStr (string_of_int tag);
+		iStr "} "; pprVars vars; iStr "-> ";
 		(*iNewline;*) iIndent (pprExpr expr)
 		(*pprExpr expr*) ]
 
 and pprAlts alts =
-	let sep = iConcat [iStr ";"; iNewline ]
+	let sep = iConcat [iStr ","; iNewline ]
 	in iInterleave sep (List.map pprAlt alts)
 
 and pprDefn (name, expr) =
@@ -131,10 +131,7 @@ and pprAExpr expr = let pexpr = pprExpr expr
 	else iConcat [ iStr "("; pexpr; iStr ")" ];;
 
 let pprSupComb (name, vars, expr) =
-	(*let pprvars = iInterleave (iStr " ") 
-		(List.map (fun v -> EVar v) vars)*)
-	iConcat [ (*iStr "var"; iStr " ";*) iStr name;
-		iStr " "; pprVars vars;
+	iConcat [iStr name; iStr " "; pprVars vars;
 		iStr "= "; pprExpr expr ];;
 
 let pprProgram prog =

@@ -80,6 +80,15 @@ let unwind state =
 				let stack' = rearrange n heap stack
 				in putCode code (putStack stack' state)
 		| NInd ia -> putCode [Unwind] (putStack (ia::ads) state)
+		| NConstr(tag, args) -> (match getDump state with
+			| (code', s')::d' ->
+				let state' = putStack (a::s') (putDump d' state)
+				in putCode code' state'
+			(* mind you, it's the same code as with NNum ! *)
+			| [] -> (*state (* G-machine has terminated *)*)
+				raise (GmEvaluationError ("unwind with NConstr "
+				^ "and empty dump - is it an error?"))
+			)
 	in newState (hLookup heap a);;
 
 let rec allocNodes n heap = if n = 0 then (heap, []) else
@@ -174,6 +183,55 @@ let cond code1 code2 state =
 		"Cond didn't find NNum 1 or NNum 0 on top of the stack"))
 	;;
 
+let pack tag arity state =
+	let stack = getStack state
+	in if arity > List.length stack then
+		raise (GmEvaluationError ("Pack needed " ^ string_of_int arity
+		^ " arguments but found less"))
+	else
+		let args = Lists.take arity stack
+		in let stack' = Lists.drop arity stack
+		in let (heap', a) = hAlloc (getHeap state) (NConstr(tag, args))
+		in putStack (a::stack') (putHeap heap' state)
+	;;
+
+let casejump alts state =
+	let (a::ads) = getStack state
+	in match hLookup (getHeap state) a with
+		| NConstr(tag, args) -> (match Lists.aLookup alts tag with
+			| Some code ->
+				putCode (code @ getCode state) state
+			| None -> raise (GmEvaluationError ("Casejump didn't "
+			^ "find a tag " ^ string_of_int tag))
+		)
+		| _ -> raise (GmEvaluationError ("Casejump expected "
+		^ "NConstr node on top of stack but found sth else"))
+	;;
+
+let split n state =
+	let (a::ads) = getStack state
+	in match hLookup (getHeap state) a with
+		| NConstr(tag, args) ->
+			putStack (args @ ads) state
+		| _ -> raise (GmEvaluationError ("Split expected "
+		^ "NConstr node on top of stack but found sth else"))
+	;;
+
+let print state =
+	let (a::ads) = getStack state
+	in match hLookup (getHeap state) a with
+		| NNum n -> 
+			let nout = getOutput state ^ " " ^ string_of_int n
+			in putStack ads (putOutput nout state)
+		| NConstr(tag, args) -> (* for now prints only arguments *)
+			let n = List.length args
+			in let evpr = List.flatten <| Lists.buildn n [Eval; Print]
+			in let s' = putCode (evpr @ getCode state) state
+			in putStack (args @ ads) s'
+		| _ -> raise (GmEvaluationError ("Print expected "
+		^ "NConstr or NNum node on top of stack but found sth else"))
+	;;
+
 let dispatch i = match i with
 	| Pushglobal f -> pushglobal f
 	| Pushint n -> pushint n
@@ -191,6 +249,10 @@ let dispatch i = match i with
 	| cp2 when List.mem cp2 [Eq; Ne; Lt; Le; Gt; Ge] ->
 		dispatchComparison cp2
 	| Cond(c1, c2) -> cond c1 c2
+	| Pack(tag, arity) -> pack tag arity
+	| Casejump alts -> casejump alts
+	| Split n -> split n
+	| Print -> print
 	;;
 
 let step state =
