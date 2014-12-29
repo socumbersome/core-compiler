@@ -83,7 +83,7 @@ let unwind state =
 				| [] -> raise (GmEvaluationError
 				("Unwinding with too few arguments and empty dump"))
 				| (code', s')::d' ->
-					let state' = putStack (Lists.last ads :: s') state
+					let state' = putStack (Lists.last stack :: s') state
 					in putCode code' (putDump d' state')
 			)
 			else 
@@ -193,9 +193,9 @@ let dispatchComparison = function
 let cond code1 code2 state =
 	let (a::ads) = getStack state
 	in match (hLookup (getHeap state) a) with
-		| (*NNum 1*) gmTrue ->
+		| (*NNum 1*)x when x = gmTrue ->
 			putCode (code1 @ getCode state) (putStack ads state)
-		| (*NNum 0*) gmFalse ->
+		| (*NNum 0*)x when x = gmFalse ->
 			putCode (code2 @ getCode state) (putStack ads state)
 		| _ -> raise (GmEvaluationError (
 		"Cond didn't find gmTrue or gmFalse on top of the stack"))

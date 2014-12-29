@@ -3,13 +3,12 @@ open Core_types;;
 open Core;;
 open Gm_types;;
 open Heap;;
+open Core_AST_utils;;
 open Miscellaneous;;
 
 type gmCompiledSC = (cName * int * gmCode);;
 type gmEnvironment = (cName, int) Lists.assoc;;
 type gmCompiler = coreExpr -> gmEnvironment -> gmCode;;
-
-exception UnsaturatedConstructor;;
 
 let compiledPrimitives = [
 	("+", 2, [Push 1; Eval; Push 1; Eval; Add; Update 2; Pop 2; Unwind]);
@@ -32,22 +31,6 @@ let builtInBinary = [ ("+", Add); ("-", Sub); ("*", Mul);
 	("<=", Le); (">", Gt); (">=", Ge) ];;
 
 let argOffset n env = List.map (fun (v, m) -> (v, m + n)) env;;
-
-let dismantleConstr expr =
-	let rec aux gathered howmany = function
-		| EAppl(e, ei) -> aux (ei::gathered) (howmany + 1) e
-		| EConstr(tag, arity) as cons -> if arity = howmany then
-			(cons, gathered)
-			else raise UnsaturatedConstructor
-		| _ -> raise UnsaturatedConstructor
-	in aux [] 0 expr;;
-
-(* terribly inefficient ;(
-TODO: find a better way! *)
-let isSaturatedConstr expr = try 
-	let _ = dismantleConstr expr in true with
-		| UnsaturatedConstructor -> false
-	;;
 
 let rec compileExprAscEnv comp exs env = match exs with
 	| [] -> []
@@ -83,7 +66,7 @@ and compileLetrec comp defs expr env =
 	in [Alloc n] @ compileLetrec' defs env' (n - 1)
 	@ comp expr env' @ [Slide n]
 
-(* compile in non-strict (lazy) context - C scheme *)
+(* compile in non-strict context - C scheme *)
 and compileC expr env = match expr with
 (*	| EVar "true" -> [Pushglobal "true"]
 	| EVar "false" -> [Pushglobal "false"] *)
@@ -93,7 +76,7 @@ and compileC expr env = match expr with
 		)
 	| ENum n -> [Pushint n]
 	| satc when isSaturatedConstr satc ->
-	(* I fear the idea with looking for EConstr is really bad... *)
+	(* I fear the idea of looking for EConstr is really bad... *)
 		let (EConstr(tag, arity), args) = dismantleConstr satc
 		in compileExprAscEnv compileC (List.rev args) env
 			@ [Pack(tag, arity)]
