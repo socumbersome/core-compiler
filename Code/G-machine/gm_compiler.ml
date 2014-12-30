@@ -101,7 +101,9 @@ let compileAlts comp alts env =
 			@ argOffset n env))
 	) alts;;
 
-(* compile in strict context - E scheme *)
+(* compile in strict context - E scheme 
+ (that means, when run, it will evaluate
+ expr to WHNF) *)
 let rec compileE expr env = match expr with
 	| ENum n -> [Pushint n]
 	| ELet(isrec, defs, e) -> if isrec then
