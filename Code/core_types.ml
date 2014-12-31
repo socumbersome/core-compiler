@@ -22,6 +22,29 @@ and
 type coreExpr = cName cExpr;;
 type coreAlter = cName cAlter;;
 
+type ('a, 'b) annExpr = ('b * ('a, 'b) annExpr')
+
+and ('a, 'b) annExpr' =
+	  AVar of cName
+	| ANum of int
+	| AConstr of int * int
+	| AAppl of (('a, 'b) annExpr) * (('a, 'b) annExpr)
+	| ALet of cIsRec
+		* (('a, 'b) annDefn) list
+		* ('a, 'b) annExpr
+	| ACase of (('a, 'b) annExpr)
+		* (('a, 'b) annAlter) list
+	| ALambd of 'a list * (('a, 'b) annExpr)
+and
+	('a, 'b) annDefn = ('a * ('a, 'b) annExpr)
+and
+	('a, 'b) annAlter = (int * 'a list * ('a, 'b) annExpr)
+	;;
+
+type ('a, 'b) annProgram = (cName * 'a list * ('a, 'b) annExpr);;
+
+module CNameSet = Set.Make(cName);;
+
 (* a `function` f is a supercombinator iff 1) or 2), where
 1) it is constant
 2) it has no free variables and every inner function

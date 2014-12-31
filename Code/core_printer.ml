@@ -137,28 +137,17 @@ and pprAExpr expr = let pexpr = pprExpr expr
 	else iConcat [ iStr "("; pexpr; iStr ")" ];;
 
 let pprSupComb (name, vars, expr) =
-	iConcat [iStr name; iStr " "; pprVars vars;
+	iConcat [binderpr name; iStr " "; pprVars vars;
 		iStr "= "; pprExpr expr ];;
 
 let pprProgram prog =
 	let sep = iConcat [ iStr ";"; iNewline ]
 	in iInterleave sep (List.map pprSupComb prog);;
 
+(* TODO make all above functions generic... *)
+let pprintGeneric binder2iseq prog =
+	failwith "not implemented pprintGeneric yet";;
+
 let pprint prog = iDisplay (pprProgram prog);;
 
-(** tests *)
-let exp1 = ELet(
-	false, 
-	[("x", ELet(
-		true,
-		[("cos", EAppl(EAppl(EVar "&", EVar "x"), EVar "y"));
-		("ok", EAppl(EAppl(EVar "+", EVar "x"), EVar "y"))],
-		EVar "bla"
-	)); ("z", ENum 3)],
-	ECase(
-		EVar "misio",
-		[(6, ["t"; "w"], EVar "i")]
-	)
-	);;
-let exp2 = EVar "nowa zmienna";;
-let prog = [("jeden", [], exp1); ("dwa", [], exp2)];;
+
