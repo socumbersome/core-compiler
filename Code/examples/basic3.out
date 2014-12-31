@@ -1,8 +1,12 @@
 pushglobal compose
+pushglobal S
+pushglobal K
+pushglobal K
 pushglobal twice
 pushglobal twice
-pushglobal inc
-   1) Output:"8 "
+pushglobal twice
+pushglobal id
+   1) Output:"3 "
        Stack:[]
        Dump:[]
       VStack:[]
@@ -11,4 +15,4 @@ pushglobal inc
       
 
 
-Steps taken = 166
+Steps taken = 831

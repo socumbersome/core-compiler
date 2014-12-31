@@ -14,13 +14,19 @@ let to_g_and_interpret program =
 	let lifted = Core_case_lifter.liftProgram program
 	in let compiledToGm = Gm_compiler.compile lifted
 	in let gmrun = Gm_evaluator.eval compiledToGm
-	in print_string (Gm_printer.showResults gmrun)
+	in print_string (Gm_printer.showResults gmrun);;
+
+let to_g_eval program =
+	let lifted = Core_case_lifter.liftProgram program
+	in let compiledToGm = Gm_compiler.compile lifted
+	in let gmrun = Gm_evaluator.eval_only_last compiledToGm
+	in print_string (Gm_printer.showResult gmrun);;
 
 let main () =
 	let cin = open_in Sys.argv.(1)
 	in let lexbuf = Lexing.from_channel cin
 	in let program = Core_parser.program Core_lexer.token lexbuf
-	in to_g_and_interpret program;;
+	in to_g_eval program;;
 	(*in let compiledToGm = Gm_compiler.compile program
 	in let gmrun = Gm_evaluator.eval compiledToGm
 	in let res = Gm_printer.showResults gmrun

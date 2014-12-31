@@ -1,8 +1,9 @@
 pushglobal compose
-pushglobal Case#_0
-pushglobal t
-pushglobal f
-   1) Output:"[2: 2 [1: ] ] "
+pushglobal gcd
+pushglobal -
+pushglobal gcd
+pushglobal gcd
+   1) Output:"2 "
        Stack:[]
        Dump:[]
       VStack:[]
@@ -11,4 +12,4 @@ pushglobal f
       
 
 
-Steps taken = 62
+Steps taken = 235

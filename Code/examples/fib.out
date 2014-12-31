@@ -1,7 +1,9 @@
 pushglobal compose
-pushglobal twice
-pushglobal twice
-pushglobal inc
+pushglobal fib
+pushglobal -
+pushglobal fib
+pushglobal -
+pushglobal fib
    1) Output:"8 "
        Stack:[]
        Dump:[]
@@ -11,4 +13,4 @@ pushglobal inc
       
 
 
-Steps taken = 166
+Steps taken = 591

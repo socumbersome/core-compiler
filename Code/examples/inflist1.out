@@ -5,8 +5,8 @@ pushglobal K1
 pushglobal abort
 pushglobal abort
 pushglobal cons
+pushglobal infinite
 pushglobal hd
-pushglobal tl
 pushglobal tl
 pushglobal infinite
    1) Output:"4 "
@@ -18,4 +18,4 @@ pushglobal infinite
       
 
 
-Steps taken = 159
+Steps taken = 127

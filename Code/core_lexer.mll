@@ -52,6 +52,7 @@ rule token = parse
 	| '+' { PLUS }
 	| '-' { MINUS }
 	| "neg" { NEG }
+	| "not" { NOT }
 	| '*' { MULTIPLY }
 	| '/' { DIVIDE }
 	| '<' { LT }

@@ -1,5 +1,4 @@
-pushglobal compose
-   1) Output:"17 "
+   1) Output:"[2: ] "
        Stack:[]
        Dump:[]
       VStack:[]
@@ -8,4 +7,4 @@ pushglobal compose
       
 
 
-Steps taken = 16
+Steps taken = 58

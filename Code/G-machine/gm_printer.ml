@@ -9,6 +9,10 @@ let rec showInstruction = function
 	| Pushglobal f -> iConcat [ iStr "Pushglobal "; iStr f ]
 	| Push n -> iConcat [ iStr "Push "; iNum n ]
 	| Pushint n -> iConcat [ iStr "Pushint "; iNum n ]
+	| Pushbasic n -> iConcat [ iStr "Pushbasic "; iNum n ]
+	| Mkbool -> iStr "Mkbool"
+	| Mkint -> iStr "Mkint"
+	| S2V -> iStr "S2V"
 	| MkAppl -> iStr "MkAppl"
 	| Slide n -> iConcat [ iStr "Slide "; iNum n ]
 	| Update n -> iConcat [ iStr "Update "; iNum n ]
@@ -26,6 +30,9 @@ let rec showInstruction = function
 	| Le -> iStr "Le"
 	| Gt -> iStr "Gt"
 	| Ge -> iStr "Ge"
+	| Or -> iStr "Or"
+	| And -> iStr "And"
+	| Not -> iStr "Not"
 	| Cond(code1, code2) -> iConcat [ iStr "(Cond"; iNewline;
 		iStr "1 -> ";
 		shortShowInstructions 3 code1; iNewline; iStr "0 -> ";
@@ -60,7 +67,8 @@ and shortShowInstructions number code =
 let showSC s (name, addr) =
 	let NGlobal(arity, code) = hLookup (getHeap s) addr
 	in iConcat [ iStr "Code for "; iStr name; iNewline;
-		showInstructions code; iNewline; iNewline ];;
+		showInstructions code; iNewline; iNewline ]
+	;;
 
 let showNode s a = function
 	| NNum n -> iNum n
@@ -103,6 +111,11 @@ let showDump s =
 			(List.map showDumpItem (List.rev (getDump s))));
 		iStr "]" ];;
 
+let showVStack s =
+	iConcat [ iStr "VStack:["; iInterleave (iStr ", ")
+		(List.map iNum (getVStack s));
+	iStr "]" ];;
+
 let showOutput s =
 	iConcat [ iStr "Output:\""; iStr (getOutput s); iStr "\"" ];;
 
@@ -110,6 +123,7 @@ let showState s = iConcat [
 	showOutput s; iNewline;
 	showStack s; iNewline;
 	showDump s; iNewline;
+	showVStack s; iNewline;
 	showInstructions (getCode s); iNewline ];;
 
 let showStats s = iConcat [ iStr "Steps taken = "; 
@@ -123,4 +137,10 @@ let showResults states =
 		iNewline; iNewline; iStr "State transitions"; iNewline;
 		iNewline; iLayn (List.map showState states); iNewline;
 		iNewline; showStats (Lists.last states) ]
+	);;
+
+let showResult state =
+	iDisplay (iConcat [
+		iLayn (List.map showState [state]); iNewline;
+		iNewline; showStats (Lists.last [state]) ]
 	);;

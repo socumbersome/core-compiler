@@ -28,8 +28,33 @@ let pushint n state =
 			let (heap', a) = hAlloc (getHeap state) (NNum n)
 			in let state' = putGlobals 
 				((string_of_int n, a)::getGlobals state) state
-			in putHeap heap' (putStack (a::getStack state') state')
+			in 
+			putHeap heap' (putStack (a::getStack state') state')
 	;;
+
+let pushbasic n state =
+	putVStack (n::getVStack state) state;;
+
+let mkbool state =
+	let (t::ns) = getVStack state
+	in let (heap', a) = hAlloc (getHeap state) (NConstr(t, []))
+	in let s' = putStack (a::getStack state) state
+	in putHeap heap' (putVStack ns s');;
+
+let mkint state =
+	let (n::ns) = getVStack state
+	in let (heap', a) = hAlloc (getHeap state) (NNum n)
+	in let s' = putStack (a::getStack state) state
+	in putHeap heap' (putVStack ns s');;
+
+let s2v state =
+	let (a::ads) = getStack state
+	in let s' = putStack ads state
+	in match hLookup (getHeap state) a with
+		| NConstr(t, []) -> putVStack (t::getVStack s') s'
+		| NNum n -> putVStack (n::getVStack s') s'
+		| _ -> raise (GmEvaluationError ("NConstr or NNum expected "
+		^ " when putting on VStack but found sth else"));;
 
 let mkAppl state =
 	let (a1::a2::ads') = getStack state
@@ -118,6 +143,7 @@ let eval_instr state =
 	in let s' = putDump ((code, ads)::getDump state) state
 	in putCode [Unwind] (putStack [a] s');;
 
+(*
 let boxInteger n state =
 	let (h', a) = hAlloc (getHeap state) (NNum n)
 	in putStack (a::getStack state) (putHeap h' state);;
@@ -140,27 +166,36 @@ let unboxInteger a state =
 		| NNum i -> i
 		| _ -> raise (GmEvaluationError ("Unboxing a non-integer"))
 	in ub (hLookup (getHeap state) a);;
-
+*)
 (* primitive1 :
 	(b -> gmState -> gmState) (* boxing function *)
 	-> (addr -> gmState -> a) (* unboxing function *)
 	-> (a -> b) (* unary operator *)
 	-> (gmState -> gmState) (* state transition *)
 *)
+let bool2int b = if b then 2 else 1;;
+let int2bool n = if n = 2 then true
+	else if n = 1 then false
+	else raise (GmEvaluationError ("int other than 1 and 2 "
+	^ "used as a boolean"));;
+
 let primitive1 box unbox op state =
-	let (a::ads) = getStack state
-	in box (op (unbox a state)) (putStack ads state);;
+	let (n::ns) = getVStack state
+	in putVStack (box (op (unbox n)) :: ns) state;;
 
 let primitive2 box unbox op state =
-	let (a0::a1::ads) = getStack state
-	in box (op (unbox a0 state) (unbox a1 state))
-		(putStack ads state);;
+	let (n0::n1::ns) = getVStack state
+	in putVStack (box (op (unbox n0) (unbox n1)) :: ns) state;;
 
-let arithmetic1 = primitive1 boxInteger unboxInteger;;
+let arithmetic1 = primitive1 id id;;
 
-let arithmetic2 = primitive2 boxInteger unboxInteger;;
+let arithmetic2 = primitive2 id id;;
 
-let comparison = primitive2 boxBoolean unboxInteger;;
+let comparison = primitive2 bool2int id;;
+
+let logical1 = primitive1 bool2int int2bool;;
+
+let logical2 = primitive2 bool2int int2bool;;
 
 let dispatchArith1 = function
 	| Neg -> arithmetic1 (fun x -> -x)
@@ -190,16 +225,29 @@ let dispatchComparison = function
 		^ "Eq, Ne, Lt, Le, Gt, Ge"))
 	;;
 
-let cond code1 code2 state =
-	let (a::ads) = getStack state
-	in match (hLookup (getHeap state) a) with
-		| (*NNum 1*)x when x = gmTrue ->
-			putCode (code1 @ getCode state) (putStack ads state)
-		| (*NNum 0*)x when x = gmFalse ->
-			putCode (code2 @ getCode state) (putStack ads state)
-		| _ -> raise (GmEvaluationError (
-		"Cond didn't find gmTrue or gmFalse on top of the stack"))
+let dispatchLog1 = function
+	| Not -> logical1 not
+	| _ -> raise (GmEvaluationError (
+		"don't know other unary logical operators other than Not"))
 	;;
+
+let dispatchLog2 = function
+	| Or -> logical2 (||)
+	| And -> logical2 (&&)
+	| _ -> raise (GmEvaluationError (
+		"don't know other binary logical operators other than: "
+		^ "Or, And"))
+	;;
+
+let cond code1 code2 state =
+	let (n::ns) = getVStack state
+	in let state' = putVStack ns state
+	in if n = gmVTrue then
+		putCode (code1 @ getCode state') state'
+	else if n = gmVFalse then
+		putCode (code2 @ getCode state') state'
+	else raise (GmEvaluationError ("Cond didn't find 2 or 1 "
+		^ "on top of VStack"));;
 
 let pack tag arity state =
 	let stack = getStack state
@@ -241,12 +289,6 @@ let print state =
 		| NNum n -> 
 			let nout = getOutput state ^ string_of_int n ^ " "
 			in putStack ads (putOutput nout state)
-(*		| gmTrue ->
-			let nout = getOutput state ^ "true "
-			in putStack ads (putOutput nout state)
-		| gmFalse ->
-			let nout = getOutput state ^ "false "
-			in putStack ads (putOutput nout state) *)
 		| NConstr(tag, args) -> (* for now prints only arguments *)
 			let n = List.length args
 			in let evpr = List.flatten <| Lists.buildn n [Eval; Print]
@@ -266,8 +308,12 @@ let printEndStruct state =
 let dispatch i = match i with
 	| Pushglobal f -> pushglobal f
 	| Pushint n -> pushint n
-	| MkAppl -> mkAppl
+	| Pushbasic n -> pushbasic n
 	| Push n -> push n
+	| Mkbool -> mkbool
+	| Mkint -> mkint
+	| S2V -> s2v
+	| MkAppl -> mkAppl
 	| Slide n -> slide n
 	| Update n -> update n
 	| Pop n -> pop n
@@ -279,6 +325,9 @@ let dispatch i = match i with
 		dispatchArith2 ar2
 	| cp2 when List.mem cp2 [Eq; Ne; Lt; Le; Gt; Ge] ->
 		dispatchComparison cp2
+	| log1 when List.mem log1 [Not] -> dispatchLog1 log1
+	| log2 when List.mem log2 [And; Or] ->
+		dispatchLog2 log2
 	| Cond(c1, c2) -> cond c1 c2
 	| Pack(tag, arity) -> pack tag arity
 	| Casejump alts -> casejump alts
@@ -299,4 +348,8 @@ let rec eval state =
 		if gmFinal state then []
 		else eval (doAdmin (step state))
 	in state::rest_states;;
+
+let rec eval_only_last state =
+	if gmFinal state then state
+	else eval_only_last (doAdmin (step state));;
 

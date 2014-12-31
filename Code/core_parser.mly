@@ -30,11 +30,12 @@
 %token TRUE FALSE
 %token <int> NUMBER
 %token <string> VARIABLE
-%token OR AND LT GT LE GE EQ NE
+%token OR NOT AND LT GT LE GE EQ NE
 %token PLUS MINUS MULTIPLY DIVIDE UNARY_MINUS NEG
 
 %left OR
 %left AND
+%left NOT
 %left LT GT LE GE
 %left EQ NE
 %left PLUS MINUS
@@ -69,6 +70,7 @@ expr: expr aexpr { EAppl($1, $2) }
 	| TRUE { EVar "true" }
 	| FALSE { EVar "false" }
 	| NEG aexpr { EAppl(EVar "neg", $2) }
+	| NOT aexpr { EAppl(EVar "not", $2) }
 	| IF expr THEN expr ELSE expr { 
 		EAppl(EAppl(EAppl(EVar "if", $2), $4), $6) }
 /*	| MINUS expr %prec UNARY_MINUS { EAppl(EAppl(EVar "-", ENum 0), $2) } */
