@@ -5,6 +5,7 @@ SOURCES = \
 	./Utils/unique_names.ml \
 	core_types.ml core.ml \
 	core_AST_utils.ml core_case_lifter.ml \
+	core_lambda_lifter.ml \
 	core_parser.mly core_lexer.mll \
 	core_printer.ml \
 	./Ti/ti_types.ml ./Ti/ti_compiler.ml \

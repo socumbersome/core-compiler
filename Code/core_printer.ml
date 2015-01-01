@@ -83,11 +83,14 @@ let rec pprExpr = function
 	| ENum n -> iStr (string_of_int n)
 	| EVar v -> iStr v
 	| EAppl(EAppl(EVar op, e1), e2) when 
-		List.mem op ["+"; "-"; "*"; "/"; "<"; ">"; "<="; ">="]
+		List.mem op ["+"; "-"; "*"; "/"; "<"; ">"; "<="; 
+		">="; "=="; "!="; "|"; "&"]
 		-> iConcat [pprAExpr e1; iStr (" " ^ op ^ " "); 
 		pprAExpr e2]
 	| EAppl(EVar "neg", e) -> 
 		iConcat [ iStr "neg "; pprAExpr e ]
+	| EAppl(EVar "not", e) -> 
+		iConcat [ iStr "not "; pprAExpr e ]
 	| EAppl(EAppl(EAppl(EVar "if", e0), e1), e2) ->
 		iConcat [ iStr "if "; pprExpr e0; iStr " then"; iNewline;
 		iStr "  "; iIndent (pprExpr e1); iNewline; iStr "else";
@@ -137,7 +140,7 @@ and pprAExpr expr = let pexpr = pprExpr expr
 	else iConcat [ iStr "("; pexpr; iStr ")" ];;
 
 let pprSupComb (name, vars, expr) =
-	iConcat [binderpr name; iStr " "; pprVars vars;
+	iConcat [iStr name; iStr " "; pprVars vars;
 		iStr "= "; pprExpr expr ];;
 
 let pprProgram prog =

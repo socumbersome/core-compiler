@@ -11,10 +11,6 @@ type 'a cExpr =
 		* 'a cExpr (* body of let[rec] *)
 	| ECase of 'a cExpr * 'a cAlter list
 	| ELambd of 'a list * 'a cExpr (* lambda abstractions *)
-(*and
-	cName = string
-and
-	cIsRec = bool*)
 and
 	'a cAlter = int * 'a list * 'a cExpr
 	;;
@@ -43,7 +39,7 @@ and
 
 type ('a, 'b) annProgram = (cName * 'a list * ('a, 'b) annExpr);;
 
-module CNameSet = Set.Make(cName);;
+module CNameSet = Set.Make(String);;
 
 (* a `function` f is a supercombinator iff 1) or 2), where
 1) it is constant

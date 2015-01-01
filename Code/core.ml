@@ -89,6 +89,8 @@ let preludeDefs =
             (EVar "f")
         )
      );
+	("cons", [], EConstr(2, 2));
+	("nil", [], EConstr(1, 0))
     ];;
 
 

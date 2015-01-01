@@ -82,10 +82,8 @@ and liftC expr ((ns, scs) as acc) = (match expr with
 		in (ns3, scCase::scs2, EAppl(EVar casename, e'))
 		(* now, as we lifted Case, its parts should be
 		 lifted starting from E (strict context) *)
-		(*in let (ns1, scs1, e') = liftE e (ns', scCase::scs)
-		in let (ns2, scs2, alts') = liftAlts liftE' alts (ns1, scs1)
-		in (ns2, scs2, ECase(e', alts'))*)
-	| ELambd(vars, e) -> failwith "lambda!"
+	| ELambd(vars, e) -> failwith ("Lambda abstraction "
+	^ "encountered during case lifting")
 	| EConstr(t, a) -> (ns, scs, expr)
 	)
 
@@ -146,4 +144,4 @@ let liftProgram program =
 		in let (ns', newscs, newexpr) = liftE body (ns, [])
 		in (ns', (name, varsn, newexpr)::newscs)
 	) Unique_names.initialSupply program
-	in List.flatten css (*@ program*);;
+	in List.flatten css;;

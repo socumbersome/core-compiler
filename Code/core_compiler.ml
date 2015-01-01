@@ -1,36 +1,36 @@
-let print_core_raw program =
-	let printed = Core_printer.pprint program
-	in print_string printed;;
+open Miscellaneous;;
 
-let print_core_caselifted program =
-	let lifted = Core_case_lifter.liftProgram program
-	in print_string (Core_printer.pprint lifted);;
+let printCore =
+	print_string << Core_printer.pprint
 
-let print_compiled_to_g program =
-	let compiledToGm = Gm_compiler.compile program
-	in print_string (Gm_printer.showResults [compiledToGm]);;
+let caseLift =
+	Core_case_lifter.liftProgram;;
 
-let to_g_and_interpret program =
-	let lifted = Core_case_lifter.liftProgram program
-	in let compiledToGm = Gm_compiler.compile lifted
-	in let gmrun = Gm_evaluator.eval compiledToGm
-	in print_string (Gm_printer.showResults gmrun);;
+let lambdaLift =
+	Core_lambda_lifter.lambdaLift;;
 
-let to_g_eval program =
-	let lifted = Core_case_lifter.liftProgram program
-	in let compiledToGm = Gm_compiler.compile lifted
-	in let gmrun = Gm_evaluator.eval_only_last compiledToGm
-	in print_string (Gm_printer.showResult gmrun);;
+let lift = lambdaLift >> caseLift;;
+
+let compile2Gm = Gm_compiler.compile;;
+
+let interpretGmAllStates = Gm_evaluator.eval;;
+
+let interpretGmLastState = Gm_evaluator.eval_only_last;;
+
+let printGmAll states = print_string << Gm_printer.showResults <| states;;
+
+let printGmLast = print_string << Gm_printer.showResult;;
+
+let printLifted = lift >> printCore;;
+
+let toGmAndPrintAll = lift >> compile2Gm >> interpretGmAllStates >> printGmAll;;
+
+let toGmAndPrintLast = lift >> compile2Gm >> interpretGmLastState >> printGmLast;;
 
 let main () =
 	let cin = open_in Sys.argv.(1)
 	in let lexbuf = Lexing.from_channel cin
 	in let program = Core_parser.program Core_lexer.token lexbuf
-	in to_g_eval program;;
-	(*in let compiledToGm = Gm_compiler.compile program
-	in let gmrun = Gm_evaluator.eval compiledToGm
-	in let res = Gm_printer.showResults gmrun
-	in print_string res*)
-	(*Core_printer.pprint program*)
+	in toGmAndPrintLast <| program;;
 
 let _ = main ();;
